@@ -62,10 +62,19 @@ public class Alphabet {
 
 	public static boolean include(char c) {
 		for (int i = 0; i < ALPHABET.length; i++) {
-			if(ALPHABET[i] == c) {
+			if (ALPHABET[i] == c) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public static int getIndex(char c) {
+		for (int i = 0; i < ALPHABET.length; i++) {
+			if (ALPHABET[i] == c) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }

@@ -7,39 +7,42 @@ public class Test {
 		testCaesar();
 		testSubstitution();
 		testVegenere();
+		testAffine();
 //		Vegenere.test();
 	}
 
 	public static void testSubstitution() {
+		Substitution substitution = new Substitution();
 		System.out.println("====================");
 		System.out.println("Mã hóa thay thế\n");
-		String key = Substitution.createKey();
+		String key = substitution.createKey();
 		System.out.println("Key: " + key);
 		String input = "Lương Hữu Luân ay";
 		System.out.println("input: " + input);
-		String encrypt = Substitution.encrypt(input, key);
+		String encrypt = substitution.encrypt(input, key);
 		System.out.println("Mã hóa: " + encrypt + "\n");
 		System.out.println("Giải mã thay thế\n");
 		System.out.println("Key: " + key);
 		System.out.println("input: " + encrypt);
-		String decrypt = Substitution.decrypt(encrypt, key);
+		String decrypt = substitution.decrypt(encrypt, key);
 		System.out.println("Giải mã: " + decrypt + "\n");
 		System.out.println("====================");
 	}
 
 	public static void testCaesar() {
+		Caesar ceasar = new Caesar();
 		System.out.println("====================");
 		System.out.println("Mã hóa dịch chuyển\n");
 		int key = 3;
 		System.out.println("Key: " + key);
 		String input = "Lương Hữu Luân ay";
 		System.out.println("input: " + input);
-		String encrypt = Caesar.encrypt(input, key);
+		String encrypt = ceasar.encrypt(input, key);
 		System.out.println("Mã hóa: " + encrypt + "\n");
 		System.out.println("Giải mã dịch chuyển\n");
 		System.out.println("Key: " + key);
 		System.out.println("input: " + encrypt);
-		String decrypt = Caesar.decrypt(encrypt, key);
+		String decrypt = ceasar.decrypt(encrypt, key);
 		System.out.println("Giải mã: " + decrypt + "\n");
 		System.out.println("====================");
 	}
@@ -60,6 +63,23 @@ public class Test {
 		System.out.println("Key: " + key);
 		System.out.println("input: " + encrypt);
 		String decrypt = Vegenere.decrypt(encrypt, key);
+		System.out.println("Giải mã: " + decrypt + "\n");
+		System.out.println("====================");
+	}
+
+	public static void testAffine() {
+		System.out.println("====================");
+		System.out.println("Mã hóa affine\n");
+		String key = Affine.createKey();
+		System.out.println("Key: " + key);
+		String input = "Lương Hữu Luân ay";
+		System.out.println("input: " + input);
+		String encrypt = Affine.encrypt(input, key);
+		System.out.println("Mã hóa: " + encrypt + "\n");
+		System.out.println("Giải mã affine\n");
+		System.out.println("Key: " + key);
+		System.out.println("input: " + encrypt);
+		String decrypt = Affine.decrypt(encrypt, key);
 		System.out.println("Giải mã: " + decrypt + "\n");
 		System.out.println("====================");
 	}

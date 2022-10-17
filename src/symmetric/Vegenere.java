@@ -81,14 +81,12 @@ public class Vegenere {
 		}
 		int indexKey = 0;
 		for (int i = 0; i < inputChars.length; i++) {
-			for (int j = 0; j < alphabet.length; j++) {
-				if (inputChars[i] == alphabet[j]) {
-					result += (j + keys[indexKey] < 29) ? alphabet[j + keys[indexKey]]
-							: alphabet[(j + keys[indexKey]) % alphabet.length];
-					indexKey = ++indexKey % keys.length;
-				}
-			}
-			if (!Alphabet.include(inputChars[i])) {
+			if (Alphabet.include(inputChars[i])) {
+				int indexChar = Alphabet.getIndex(inputChars[i]);
+				result += (indexChar + keys[indexKey] < 29) ? alphabet[indexChar + keys[indexKey]]
+						: alphabet[(indexChar + keys[indexKey]) % alphabet.length];
+				indexKey = ++indexKey % keys.length;
+			} else {
 				result += inputChars[i];
 			}
 		}
@@ -107,14 +105,12 @@ public class Vegenere {
 		}
 		int indexKey = 0;
 		for (int i = 0; i < inputChars.length; i++) {
-			for (int j = 0; j < alphabet.length; j++) {
-				if (inputChars[i] == alphabet[j]) {
-					result += (j - keys[indexKey] >= 0) ? alphabet[j - keys[indexKey]]
-							: alphabet[(j - keys[indexKey]) + alphabet.length];
-					indexKey = ++indexKey % keys.length;
-				}
-			}
-			if (!Alphabet.include(inputChars[i])) {
+			if (Alphabet.include(inputChars[i])) {
+				int indexChar = Alphabet.getIndex(inputChars[i]);
+				result += (indexChar - keys[indexKey] >= 0) ? alphabet[indexChar - keys[indexKey]]
+						: alphabet[(indexChar - keys[indexKey]) + alphabet.length];
+				indexKey = ++indexKey % keys.length;
+			} else {
 				result += inputChars[i];
 			}
 		}
