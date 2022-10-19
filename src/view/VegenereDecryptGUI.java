@@ -4,14 +4,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import symmetric.Vegenere;
 
 public class VegenereDecryptGUI extends JPanel {
 	/**
@@ -23,8 +29,11 @@ public class VegenereDecryptGUI extends JPanel {
 	private Font labelFont = new Font("Tahoma", Font.BOLD, 16);
 	private JTextField textFieldKey;
 	private JTextField textFieldKeyLenght;
+	private Vegenere vegenere;
+	private JTextArea textAreaPlainText, textAreaCipherText;
 
 	public VegenereDecryptGUI() {
+		vegenere = new Vegenere();
 		setLayout(null);
 
 		JLabel lblTool = new JLabel("@LHL Encrypt Tool");
@@ -41,12 +50,12 @@ public class VegenereDecryptGUI extends JPanel {
 		lblKeyLenght.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblKeyLenght.setBounds(31, 5, 100, 20);
 		panelKey.add(lblKeyLenght);
-		
+
 		textFieldKeyLenght = new JTextField();
 		textFieldKeyLenght.setColumns(10);
 		textFieldKeyLenght.setBounds(128, 5, 86, 20);
 		panelKey.add(textFieldKeyLenght);
-		
+
 		JLabel lblKey = new JLabel("Key:");
 		lblKey.setBounds(249, 5, 36, 20);
 		lblKey.setFont(labelFont);
@@ -66,7 +75,7 @@ public class VegenereDecryptGUI extends JPanel {
 		JScrollPane scrollPaneCipherText = new JScrollPane();
 		panelCipherText.add(scrollPaneCipherText);
 
-		JTextArea textAreaCipherText = new JTextArea();
+		textAreaCipherText = new JTextArea();
 		scrollPaneCipherText.setViewportView(textAreaCipherText);
 
 		JLabel lblCipherText = new JLabel("Cipher text");
@@ -82,7 +91,8 @@ public class VegenereDecryptGUI extends JPanel {
 		JScrollPane scrollPanePlainText = new JScrollPane();
 		panelPlainText.add(scrollPanePlainText);
 
-		JTextArea textAreaPlainText = new JTextArea();
+		textAreaPlainText = new JTextArea();
+		textAreaPlainText.setEditable(false);
 		scrollPanePlainText.setViewportView(textAreaPlainText);
 
 		JLabel lblPlainText = new JLabel("Plain text");
@@ -100,6 +110,13 @@ public class VegenereDecryptGUI extends JPanel {
 		btnImportKey.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnImportKey.setBackground(Color.BLUE);
 		panelBtns.add(btnImportKey);
+		btnImportKey.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onImportKey();
+			}
+		});
 
 		JButton btnImportText = new JButton("Import text");
 		btnImportText.setForeground(Color.WHITE);
@@ -107,13 +124,13 @@ public class VegenereDecryptGUI extends JPanel {
 		btnImportText.setBackground(Color.BLUE);
 		btnImportText.setPreferredSize(dimForBtn);
 		panelBtns.add(btnImportText);
-		
-		JButton btnSaveKey = new JButton("Save key");
-		btnSaveKey.setPreferredSize(new Dimension(115, 40));
-		btnSaveKey.setForeground(Color.WHITE);
-		btnSaveKey.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnSaveKey.setBackground(Color.BLUE);
-		panelBtns.add(btnSaveKey);
+		btnImportText.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onImportText();
+			}
+		});
 
 		JButton btnSaveText = new JButton("Save text");
 		btnSaveText.setForeground(Color.WHITE);
@@ -121,13 +138,80 @@ public class VegenereDecryptGUI extends JPanel {
 		btnSaveText.setBackground(Color.BLUE);
 		btnSaveText.setPreferredSize(dimForBtn);
 		panelBtns.add(btnSaveText);
+		btnSaveText.addActionListener(new ActionListener() {
 
-		JButton btnEncrypt = new JButton("Decrypt");
-		btnEncrypt.setForeground(Color.WHITE);
-		btnEncrypt.setFont(btnFont);
-		btnEncrypt.setBackground(Color.BLUE);
-		btnEncrypt.setPreferredSize(dimForBtn);
-		panelBtns.add(btnEncrypt);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onSaveText();
+			}
+		});
+
+		JButton btnDecrypt = new JButton("Decrypt");
+		btnDecrypt.setForeground(Color.WHITE);
+		btnDecrypt.setFont(btnFont);
+		btnDecrypt.setBackground(Color.BLUE);
+		btnDecrypt.setPreferredSize(dimForBtn);
+		panelBtns.add(btnDecrypt);
+		btnDecrypt.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onDecrypt();
+			}
+		});
 	}
 
+	public void onImportKey() {
+		File choose = FileUtils.chooseFile();
+		if (choose != null) {
+			String[] fileNameSplit = choose.getName().split("\\.");
+			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
+				String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
+				if (keyType.trim().toLowerCase().equals("vegenere")) {
+					String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+					fileContent = fileContent.substring(fileContent.indexOf(keyType) + 9);
+					textFieldKey.setText(fileContent.trim());
+				} else {
+					JOptionPane.showMessageDialog(null, "This is not vegenere key");
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+			}
+		}
+	}
+
+	public void onImportText() {
+		File choose = FileUtils.chooseFile();
+		if (choose != null) {
+			String[] fileNameSplit = choose.getName().split("\\.");
+			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
+				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+				textAreaCipherText.setText(fileContent);
+			} else {
+				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+			}
+		}
+	}
+
+	public void onSaveText() {
+		if (textAreaCipherText.getText().trim().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Nothing to save");
+		} else {
+			FileUtils.onSave(textAreaCipherText.getText());
+		}
+	}
+
+	public void onDecrypt() {
+		if (textAreaCipherText.getText().trim().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Nothing to encrypt");
+		} else {
+			String key = this.textFieldKey.getText().trim();
+			if (vegenere.checkKey(key)) {
+				String decryptText = vegenere.decrypt(this.textAreaCipherText.getText(), key);
+				this.textAreaPlainText.setText(decryptText);
+			} else {
+				JOptionPane.showMessageDialog(null, "Key is wrong format, try again vd: 'a c v' is key");
+			}
+		}
+	}
 }

@@ -48,21 +48,22 @@ public class Test {
 	}
 
 	public static void testVegenere() {
+		Vegenere vegenere = new Vegenere();
 		System.out.println("====================");
 		System.out.println("Mã hóa vegenere\n");
-		int keyLenght = 5;
+		int keyLenght = 1;
 		System.out.println("Key lenght: " + keyLenght);
-		String key = Vegenere.createKey(keyLenght);
+		String key = vegenere.createKey(keyLenght);
 		System.out.println("Key: " + key);
 		String input = "Lương Hữu Luân ay";
 		System.out.println("input: " + input);
-		String encrypt = Vegenere.encrypt(input, key);
+		String encrypt = vegenere.encrypt(input, key);
 		System.out.println("Mã hóa: " + encrypt + "\n");
 		System.out.println("Giải mã vegenere\n");
 		System.out.println("Key lenght: " + keyLenght);
 		System.out.println("Key: " + key);
 		System.out.println("input: " + encrypt);
-		String decrypt = Vegenere.decrypt(encrypt, key);
+		String decrypt = vegenere.decrypt(encrypt, key);
 		System.out.println("Giải mã: " + decrypt + "\n");
 		System.out.println("====================");
 	}

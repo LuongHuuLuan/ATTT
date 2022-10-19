@@ -7,19 +7,19 @@ import java.util.StringTokenizer;
 // EX: 4 10 13 2 7: 4 is key lenght and 10 13 2 7 is key
 public class Vegenere {
 
-	public static String createKey(int keyLenght) {
+	public String createKey(int keyLenght) {
 		char[] alphabet = Alphabet.ALPHABET;
 		String result = "";
 		int count = keyLenght;
 		while (count > 0) {
 			int random = (int) Math.floor(Math.random() * alphabet.length);
-			result += random + " ";
+			result += alphabet[random] + " ";
 			count--;
 		}
 		return result.trim();
 	}
 
-	public static String createInputKey(String input) {
+	public String createInputKey(String input) {
 		StringTokenizer stk = new StringTokenizer(input);
 		int countTokens = stk.countTokens();
 		if (countTokens < 2) {
@@ -44,7 +44,7 @@ public class Vegenere {
 		}
 	}
 
-	public static boolean checkInputKey(String input) {
+	public boolean checkInputKey(String input) {
 		StringTokenizer stk = new StringTokenizer(input);
 		int countTokens = stk.countTokens();
 		if (countTokens < 2) {
@@ -69,7 +69,17 @@ public class Vegenere {
 		return true;
 	}
 
-	public static String encrypt(String input, String key) {
+	public boolean checkKey(String input) {
+		String[] inputSplit = input.split(" ");
+		for (String s : inputSplit) {
+			if (s.length() != 1 && !Alphabet.include(s.charAt(0))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public String encrypt(String input, String key) {
 		char[] alphabet = Alphabet.ALPHABET;
 		String fillerInput = Alphabet.filterInput(input);
 		String result = "";
@@ -77,7 +87,7 @@ public class Vegenere {
 		String[] keysString = key.split(" ");
 		int[] keys = new int[keysString.length];
 		for (int i = 0; i < keysString.length; i++) {
-			keys[i] = Integer.parseInt(keysString[i]);
+			keys[i] = Alphabet.getIndex(keysString[i].charAt(0));
 		}
 		int indexKey = 0;
 		for (int i = 0; i < inputChars.length; i++) {
@@ -93,7 +103,7 @@ public class Vegenere {
 		return result;
 	}
 
-	public static String decrypt(String input, String key) {
+	public String decrypt(String input, String key) {
 		char[] alphabet = Alphabet.ALPHABET;
 		String fillerInput = Alphabet.filterInput(input);
 		String result = "";
@@ -101,7 +111,7 @@ public class Vegenere {
 		String[] keysString = key.split(" ");
 		int[] keys = new int[keysString.length];
 		for (int i = 0; i < keysString.length; i++) {
-			keys[i] = Integer.parseInt(keysString[i]);
+			keys[i] = Alphabet.getIndex(keysString[i].charAt(0));
 		}
 		int indexKey = 0;
 		for (int i = 0; i < inputChars.length; i++) {
@@ -118,16 +128,17 @@ public class Vegenere {
 	}
 
 	public static void test() {
+		Vegenere vegenere = new Vegenere();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter your key format: \"key lenght\" \"keyValue1, keyValue2,...\"");
-		String key = createInputKey(sc.nextLine());
+		String key = vegenere.createInputKey(sc.nextLine());
 		System.out.println("Enter your plain text");
 		String input = sc.nextLine();
 		sc.close();
 		System.out.println("Encrypt:");
-		String encrypt = encrypt(input, key);
+		String encrypt = vegenere.encrypt(input, key);
 		System.out.println(encrypt);
 		System.out.println("Decrypt:");
-		System.out.println(decrypt(encrypt, key));
+		System.out.println(vegenere.decrypt(encrypt, key));
 	}
 }

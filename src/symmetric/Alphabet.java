@@ -2,7 +2,9 @@ package symmetric;
 
 public class Alphabet {
 	public static char[] ALPHABET = { 'a', 'ă', 'â', 'b', 'c', 'd', 'đ', 'e', 'ê', 'g', 'h', 'i', 'k', 'l', 'm', 'n',
-			'o', 'ô', 'ơ', 'p', 'q', 'r', 's', 't', 'u', 'ư', 'v', 'x', 'y' };
+			'o', 'ô', 'ơ', 'p', 'q', 'r', 's', 't', 'u', 'ư', 'v', 'x', 'y'};
+//	public static final char[] ALPHABET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+//			'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 	public static char[] UNIKEY_A1 = { 'á', 'à', 'ã', 'ạ', 'ả' };
 	public static char[] UNIKEY_A2 = { 'ắ', 'ằ', 'ẳ', 'ẵ', 'ặ' };
 	public static char[] UNIKEY_A3 = { 'ấ', 'ầ', 'ẩ', 'ẫ', 'ậ' };

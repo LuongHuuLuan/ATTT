@@ -112,6 +112,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 		btnImportText.setFont(btnFont);
 		btnImportText.setBackground(Color.BLUE);
 		btnImportText.setPreferredSize(dimForBtn);
+		panelBtns.add(btnImportText);
 		btnImportText.addActionListener(new ActionListener() {
 
 			@Override
@@ -119,7 +120,6 @@ public class SubstitutionEncryptGUI extends JPanel {
 				onImportText();
 			}
 		});
-		panelBtns.add(btnImportText);
 
 		JButton btnCreateKey = new JButton("Create key");
 		btnCreateKey.setPreferredSize(new Dimension(115, 40));
