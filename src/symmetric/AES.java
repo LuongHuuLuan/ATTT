@@ -11,16 +11,17 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-public class DES {
+public class AES {
 	private SecretKey secretKey;
 	private Cipher cipher;
 
-	public DES() {
+	public AES() {
 		try {
-			cipher = Cipher.getInstance("DES");
+			cipher = Cipher.getInstance("AES");
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public SecretKey getSecretKey() {
@@ -31,9 +32,26 @@ public class DES {
 		this.secretKey = secretKey;
 	}
 
-	public void createKey() {
+	public void createKey(int keySize) {
 		try {
-			secretKey = KeyGenerator.getInstance("DES").generateKey();
+			KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+			switch (keySize) {
+			case 128: {
+				keyGen.init(128);
+				break;
+			}
+			case 192: {
+				keyGen.init(192);
+				break;
+			}
+			case 256: {
+				keyGen.init(256);
+				break;
+			}
+			default:
+				throw new IllegalArgumentException("Wrong keysize: must be equal to 128, 192 or 256");
+			}
+			secretKey = keyGen.generateKey();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
@@ -93,4 +111,10 @@ public class DES {
 		return null;
 	}
 
+	public static void main(String[] args) {
+		AES aes = new AES();
+		aes.createKey(128);
+		aes.createKey(192);
+		aes.createKey(256);
+	}
 }

@@ -4,15 +4,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
 
+import javax.crypto.SecretKey;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+
+import symmetric.AES;
 
 public class AesEncryptGUI extends JPanel {
 	/**
@@ -24,8 +33,16 @@ public class AesEncryptGUI extends JPanel {
 	private Font labelFont = new Font("Tahoma", Font.BOLD, 16);
 	private DefaultComboBoxModel<String> modelCombobox = new DefaultComboBoxModel<String>(
 			new String[] { "128 bit", "192 bit", "256 bit" });
+	private JComboBox<String> comboBoxKeySize;
+	private JTextArea textAreaPlainText, textAreaCipherText;
+	private JPanel panelKey;
+	private JLabel lblKey;
+
+	private byte[] byteData;
+	private AES aes;
 
 	public AesEncryptGUI() {
+		aes = new AES();
 		setLayout(null);
 
 		JLabel lblTool = new JLabel("@LHL Encrypt Tool");
@@ -44,19 +61,19 @@ public class AesEncryptGUI extends JPanel {
 		lblKeySize.setFont(new Font("Tahoma", Font.BOLD, 16));
 		panelKeySize.add(lblKeySize);
 
-		JComboBox<String> comboBoxKeySize = new JComboBox<String>();
+		comboBoxKeySize = new JComboBox<String>();
 		comboBoxKeySize.setModel(modelCombobox);
 		comboBoxKeySize.setBounds(146, 5, 82, 23);
 		comboBoxKeySize.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		panelKeySize.add(comboBoxKeySize);
 
-		JPanel panelKey = new JPanel();
+		panelKey = new JPanel();
 		panelKey.setBackground(new Color(255, 128, 128));
 		panelKey.setBounds(334, 11, 383, 30);
 		add(panelKey);
 		panelKey.setLayout(null);
 
-		JLabel lblKey = new JLabel("Please import or create new key");
+		lblKey = new JLabel("Please import or create new key");
 		lblKey.setForeground(new Color(255, 255, 255));
 		lblKey.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblKey.setHorizontalAlignment(SwingConstants.CENTER);
@@ -71,7 +88,7 @@ public class AesEncryptGUI extends JPanel {
 		JScrollPane scrollPanePlainText = new JScrollPane();
 		panelPlainText.add(scrollPanePlainText);
 
-		JTextArea textAreaPlainText = new JTextArea();
+		textAreaPlainText = new JTextArea();
 		scrollPanePlainText.setViewportView(textAreaPlainText);
 
 		JLabel lblPlainText = new JLabel("Plain text");
@@ -87,7 +104,7 @@ public class AesEncryptGUI extends JPanel {
 		JScrollPane scrollPaneCipherText = new JScrollPane();
 		panelCipherText.add(scrollPaneCipherText);
 
-		JTextArea textAreaCipherText = new JTextArea();
+		textAreaCipherText = new JTextArea();
 		scrollPaneCipherText.setViewportView(textAreaCipherText);
 
 		JLabel lblCipherText = new JLabel("Cipher text");
@@ -105,6 +122,13 @@ public class AesEncryptGUI extends JPanel {
 		btnImportKey.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnImportKey.setBackground(Color.BLUE);
 		panelBtns.add(btnImportKey);
+		btnImportKey.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onImportKey();
+			}
+		});
 
 		JButton btnImportText = new JButton("Import text");
 		btnImportText.setForeground(Color.WHITE);
@@ -112,6 +136,13 @@ public class AesEncryptGUI extends JPanel {
 		btnImportText.setBackground(Color.BLUE);
 		btnImportText.setPreferredSize(dimForBtn);
 		panelBtns.add(btnImportText);
+		btnImportText.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onImportText();
+			}
+		});
 
 		JButton btnCreateKey = new JButton("Create key");
 		btnCreateKey.setPreferredSize(new Dimension(115, 40));
@@ -119,6 +150,13 @@ public class AesEncryptGUI extends JPanel {
 		btnCreateKey.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnCreateKey.setBackground(Color.BLUE);
 		panelBtns.add(btnCreateKey);
+		btnCreateKey.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onCreateKey();
+			}
+		});
 
 		JButton btnSaveKey = new JButton("Save key");
 		btnSaveKey.setPreferredSize(new Dimension(115, 40));
@@ -126,6 +164,13 @@ public class AesEncryptGUI extends JPanel {
 		btnSaveKey.setFont(new Font("Tahoma", Font.BOLD, 12));
 		btnSaveKey.setBackground(Color.BLUE);
 		panelBtns.add(btnSaveKey);
+		btnSaveKey.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onSaveKey();
+			}
+		});
 
 		JButton btnSaveText = new JButton("Save text");
 		btnSaveText.setForeground(Color.WHITE);
@@ -133,6 +178,13 @@ public class AesEncryptGUI extends JPanel {
 		btnSaveText.setBackground(Color.BLUE);
 		btnSaveText.setPreferredSize(dimForBtn);
 		panelBtns.add(btnSaveText);
+		btnSaveText.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onSaveText();
+			}
+		});
 
 		JButton btnEncrypt = new JButton("Encrypt");
 		btnEncrypt.setForeground(Color.WHITE);
@@ -140,6 +192,103 @@ public class AesEncryptGUI extends JPanel {
 		btnEncrypt.setBackground(Color.BLUE);
 		btnEncrypt.setPreferredSize(dimForBtn);
 		panelBtns.add(btnEncrypt);
+		btnEncrypt.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onEncrypt();
+			}
+		});
+
+	}
+
+	public void keyIsReady() {
+		lblKey.setText("Key is ready");
+		panelKey.setBackground(new Color(128, 255, 128));
+	}
+
+	public void onImportKey() {
+		File choose = FileUtils.chooseFile();
+		if (choose != null) {
+			try {
+				SecretKey key = (SecretKey) FileUtils.readObjectFile(choose.getAbsolutePath());
+				if (key.getAlgorithm().equalsIgnoreCase("AES")) {
+					aes.setSecretKey(key);
+					keyIsReady();
+				} else {
+					JOptionPane.showMessageDialog(null, "This is not AES key");
+				}
+			} catch (ClassNotFoundException | IOException e) {
+				JOptionPane.showMessageDialog(null, "This is not AES key");
+			}
+		}
+	}
+
+	public void onImportText() {
+		File choose = FileUtils.chooseFile();
+		if (choose != null) {
+			String[] fileNameSplit = choose.getName().split("\\.");
+			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
+				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+				textAreaPlainText.setText(fileContent.trim());
+			} else {
+				byteData = FileUtils.readByteFile(choose.getAbsolutePath());
+				textAreaPlainText.setText("Encrypt file: " + choose.getAbsolutePath());
+			}
+		}
+	}
+
+	public void onCreateKey() {
+		int[] keyLenghts = { 128, 192, 256 };
+		int keyLenght = keyLenghts[comboBoxKeySize.getSelectedIndex()];
+		aes.createKey(keyLenght);
+		keyIsReady();
+	}
+
+	public void onSaveKey() {
+		if (aes.getSecretKey() == null) {
+			JOptionPane.showMessageDialog(null, "Key is null, Import or create new key");
+		} else {
+			FileUtils.onSaveObj(aes.getSecretKey());
+		}
+	}
+
+	public void onSaveText() {
+		String cipherText = textAreaCipherText.getText();
+		if (cipherText.trim().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Nothing to save");
+		} else {
+			String saveContent = "";
+			if (cipherText.equals("Encryption successful, choose save text to save the result")) {
+				saveContent = Base64.getEncoder().encodeToString(byteData);
+			} else {
+				saveContent = cipherText;
+			}
+			FileUtils.onSave(saveContent);
+		}
+	}
+
+	public void onEncrypt() {
+		try {
+			if (textAreaPlainText.getText().trim().length() == 0) {
+				JOptionPane.showMessageDialog(null, "Nothing to encrypt");
+			} else {
+				if (aes.getSecretKey() == null) {
+					JOptionPane.showMessageDialog(null, "Import or create new key before encrypt");
+				} else {
+					String plainText = textAreaPlainText.getText();
+					if (plainText.indexOf("Encrypt file: ") == 0) {
+						byte[] encrypt = aes.encrypt(byteData);
+						byteData = encrypt;
+						textAreaCipherText.setText("Encryption successful, choose save text to save the result");
+					} else {
+						String encrypt = aes.encrypt(plainText);
+						textAreaCipherText.setText(encrypt);
+					}
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Can't encrypt, try again");
+		}
 	}
 }

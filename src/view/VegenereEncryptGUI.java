@@ -234,11 +234,16 @@ public class VegenereEncryptGUI extends JPanel {
 	public void onSaveKey() {
 		String saveContent = "vegenere\n";
 		String key = textFieldKey.getText().trim();
-		if (vegenere.checkKey(key)) {
-			saveContent += key;
-			FileUtils.onSave(saveContent);
+		if (key.length() != 0) {
+			if (vegenere.checkKey(key)) {
+				saveContent += key;
+				FileUtils.onSave(saveContent);
+			} else {
+				JOptionPane.showMessageDialog(null, "Key is wrong format, try again vd: 'a c v' is key");
+			}
 		} else {
-			JOptionPane.showMessageDialog(null, "Key is wrong format, try again vd: 'a c v' is key");
+			JOptionPane.showMessageDialog(null, "Key is null, Please create key");
+
 		}
 	}
 

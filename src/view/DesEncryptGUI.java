@@ -7,7 +7,10 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
 
+import javax.crypto.SecretKey;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,6 +32,8 @@ public class DesEncryptGUI extends JPanel {
 	private DES des;
 	private JTextArea textAreaPlainText, textAreaCipherText;
 	private JPanel panelKey;
+	private JLabel lblKey;
+	private byte[] byteData;
 
 	public DesEncryptGUI() {
 		des = new DES();
@@ -46,7 +51,7 @@ public class DesEncryptGUI extends JPanel {
 		add(panelKey);
 		panelKey.setLayout(null);
 
-		JLabel lblKey = new JLabel("Please import or create new key");
+		lblKey = new JLabel("Please import or create new key");
 		lblKey.setForeground(new Color(255, 255, 255));
 		lblKey.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblKey.setHorizontalAlignment(SwingConstants.CENTER);
@@ -170,26 +175,31 @@ public class DesEncryptGUI extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				onEncrypt();
 			}
 		});
 	}
 
+	public void keyIsReady() {
+		lblKey.setText("Key is ready");
+		panelKey.setBackground(new Color(128, 255, 128));
+	}
+
 	public void onImportKey() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
-				if (keyType.trim().toLowerCase().equals("DES")) {
-//					String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-//					fileContent = fileContent.substring(fileContent.indexOf(keyType) + 4);
-//					textFieldKey.setText(fileContent.trim());
+
+			try {
+				SecretKey key = (SecretKey) FileUtils.readObjectFile(choose.getAbsolutePath());
+				if (key.getAlgorithm().equalsIgnoreCase("DES")) {
+					des.setSecretKey(key);
+					keyIsReady();
 				} else {
-					JOptionPane.showMessageDialog(null, "This is not vegenere key");
+					JOptionPane.showMessageDialog(null, "This is not DES key");
 				}
-			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+			} catch (ClassNotFoundException | IOException e) {
+				JOptionPane.showMessageDialog(null, "This is not DES key");
 			}
 		}
 	}
@@ -200,30 +210,63 @@ public class DesEncryptGUI extends JPanel {
 			String[] fileNameSplit = choose.getName().split("\\.");
 			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
 				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-				textAreaPlainText.setText(fileContent);
+				textAreaPlainText.setText(fileContent.trim());
 			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+				byteData = FileUtils.readByteFile(choose.getAbsolutePath());
+				textAreaPlainText.setText("Encrypt file: " + choose.getAbsolutePath());
 			}
 		}
 	}
 
 	public void onCreateKey() {
-
+		des.createKey();
+		keyIsReady();
 	}
 
 	public void onSaveKey() {
-
+		if (des.getSecretKey() == null) {
+			JOptionPane.showMessageDialog(null, "Key is null, Import or create new key");
+		} else {
+			FileUtils.onSaveObj(des.getSecretKey());
+		}
 	}
 
 	public void onSaveText() {
-		if (textAreaCipherText.getText().trim().length() == 0) {
+		String cipherText = textAreaCipherText.getText();
+		if (cipherText.trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSave(textAreaCipherText.getText());
+			String saveContent = "";
+			if (cipherText.equals("Encryption successful, choose save text to save the result")) {
+				saveContent = Base64.getEncoder().encodeToString(byteData);
+			} else {
+				saveContent = cipherText;
+			}
+			FileUtils.onSave(saveContent);
 		}
 	}
 
 	public void onEncrypt() {
-
+		try {
+			if (textAreaPlainText.getText().trim().length() == 0) {
+				JOptionPane.showMessageDialog(null, "Nothing to encrypt");
+			} else {
+				if (des.getSecretKey() == null) {
+					JOptionPane.showMessageDialog(null, "Import or create new key before encrypt");
+				} else {
+					String plainText = textAreaPlainText.getText();
+					if (plainText.indexOf("Encrypt file: ") == 0) {
+						byte[] encrypt = des.encrypt(byteData);
+						byteData = encrypt;
+						textAreaCipherText.setText("Encryption successful, choose save text to save the result");
+					} else {
+						String encrypt = des.encrypt(plainText);
+						textAreaCipherText.setText(encrypt);
+					}
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Can't encrypt, try again");
+		}
 	}
 }
