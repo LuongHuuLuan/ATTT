@@ -4,13 +4,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+
+import hasing.Hasing;
 
 public class Md5EncryptGUI extends JPanel {
 	/**
@@ -20,8 +26,12 @@ public class Md5EncryptGUI extends JPanel {
 	private Dimension dimForBtn = new Dimension(115, 40);
 	private Font btnFont = new Font("Tahoma", Font.BOLD, 12);
 	private Font labelFont = new Font("Tahoma", Font.BOLD, 16);
+	private JTextArea textAreaPlainText, textAreaCipherText;
+
+	private Hasing hasing;
 
 	public Md5EncryptGUI() {
+		hasing = Hasing.getIntance(Hasing.MD5);
 		setLayout(null);
 
 		JLabel lblTool = new JLabel("@LHL Encrypt Tool");
@@ -38,7 +48,7 @@ public class Md5EncryptGUI extends JPanel {
 		JScrollPane scrollPanePlainText = new JScrollPane();
 		panelPlainText.add(scrollPanePlainText);
 
-		JTextArea textAreaPlainText = new JTextArea();
+		textAreaPlainText = new JTextArea();
 		scrollPanePlainText.setViewportView(textAreaPlainText);
 
 		JLabel lblPlainText = new JLabel("Plain text");
@@ -54,7 +64,7 @@ public class Md5EncryptGUI extends JPanel {
 		JScrollPane scrollPaneCipherText = new JScrollPane();
 		panelCipherText.add(scrollPaneCipherText);
 
-		JTextArea textAreaCipherText = new JTextArea();
+		textAreaCipherText = new JTextArea();
 		scrollPaneCipherText.setViewportView(textAreaCipherText);
 
 		JLabel lblCipherText = new JLabel("Cipher text");
@@ -72,6 +82,12 @@ public class Md5EncryptGUI extends JPanel {
 		btnImportText.setBackground(Color.BLUE);
 		btnImportText.setPreferredSize(dimForBtn);
 		panelBtns.add(btnImportText);
+		btnImportText.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onImportText();
+			}
+		});
 
 		JButton btnSaveText = new JButton("Save text");
 		btnSaveText.setForeground(Color.WHITE);
@@ -79,6 +95,12 @@ public class Md5EncryptGUI extends JPanel {
 		btnSaveText.setBackground(Color.BLUE);
 		btnSaveText.setPreferredSize(dimForBtn);
 		panelBtns.add(btnSaveText);
+		btnSaveText.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onSaveText();
+			}
+		});
 
 		JButton btnEncrypt = new JButton("Encrypt");
 		btnEncrypt.setForeground(Color.WHITE);
@@ -86,6 +108,41 @@ public class Md5EncryptGUI extends JPanel {
 		btnEncrypt.setBackground(Color.BLUE);
 		btnEncrypt.setPreferredSize(dimForBtn);
 		panelBtns.add(btnEncrypt);
+		btnEncrypt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				onEncrypt();
+			}
+		});
+	}
 
+	public void onImportText() {
+		File choose = FileUtils.chooseFile();
+		if (choose != null) {
+			String[] fileNameSplit = choose.getName().split("\\.");
+			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
+				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+				textAreaPlainText.setText(fileContent);
+			} else {
+				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+			}
+		}
+	}
+
+	public void onSaveText() {
+		if (textAreaCipherText.getText().trim().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Nothing to save");
+		} else {
+			FileUtils.onSave(textAreaCipherText.getText());
+		}
+	}
+
+	public void onEncrypt() {
+		if (textAreaPlainText.getText().trim().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Nothing to encrypt");
+		} else {
+			String encryptText = this.hasing.getHashText(this.textAreaPlainText.getText());
+			this.textAreaCipherText.setText(encryptText);
+		}
 	}
 }
