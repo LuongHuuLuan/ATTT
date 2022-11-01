@@ -32,6 +32,7 @@ public class HillDecryptGUI extends JPanel {
 	private JTextArea textAreaPlainText, textAreaCipherText;
 
 	public HillDecryptGUI() {
+		hill = new Hill();
 		setLayout(null);
 
 		JLabel lblTool = new JLabel("@LHL Encrypt Tool");
@@ -191,6 +192,16 @@ public class HillDecryptGUI extends JPanel {
 	}
 
 	public void onDecrypt() {
-		
+		if (textAreaCipherText.getText().trim().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Nothing to encrypt");
+		} else {
+			String key = this.textFieldKey.getText().trim();
+			if (!hill.checkKey(key)) {
+				JOptionPane.showMessageDialog(null, "Invalid key");
+			} else {
+				String encryptText = hill.decryptWithSpecialChar(this.textAreaCipherText.getText().trim(), key);
+				this.textAreaPlainText.setText(encryptText);
+			}
+		}
 	}
 }

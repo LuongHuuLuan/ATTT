@@ -208,11 +208,19 @@ public class HillEncryptGUI extends JPanel {
 	}
 
 	public void onCreateKey() {
-
+		String key = hill.convertKeyToString(hill.createKey());
+		textFieldKey.setText(key.trim());
 	}
 
 	public void onSaveKey() {
-
+		String saveContent = "hill\n";
+		String key = textFieldKey.getText().trim();
+		if (hill.checkKey(key)) {
+			saveContent += key;
+			FileUtils.onSave(saveContent);
+		} else {
+			JOptionPane.showMessageDialog(null, "Invalid key");
+		}
 	}
 
 	public void onSaveText() {
@@ -224,6 +232,16 @@ public class HillEncryptGUI extends JPanel {
 	}
 
 	public void onEncrypt() {
-
+		if (textAreaPlainText.getText().trim().length() == 0) {
+			JOptionPane.showMessageDialog(null, "Nothing to encrypt");
+		} else {
+			String key = this.textFieldKey.getText().trim();
+			if (!hill.checkKey(key)) {
+				JOptionPane.showMessageDialog(null, "Invalid key");
+			} else {
+				String encryptText = hill.encryptWithSpecialChar(this.textAreaPlainText.getText().trim(), key);
+				this.textAreaCipherText.setText(encryptText);
+			}
+		}
 	}
 }

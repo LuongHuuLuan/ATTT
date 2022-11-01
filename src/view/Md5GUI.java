@@ -19,8 +19,6 @@ public class Md5GUI extends JPanel {
 
 		JPanel tabEncrypt = new Md5EncryptGUI();
 		tabbedPane.addTab("Encrypt", null, tabEncrypt, null);
-		JPanel tabDecrypt = new Md5DecryptGUI();
-		tabbedPane.addTab("Decrypt", null, tabDecrypt, null);
 
 	}
 }

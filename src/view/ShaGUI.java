@@ -19,8 +19,6 @@ public class ShaGUI extends JPanel {
 
 		JPanel tabEncrypt = new ShaEncryptGUI();
 		tabbedPane.addTab("Encrypt", null, tabEncrypt, null);
-		JPanel tabDecrypt = new ShaDecryptGUI();
-		tabbedPane.addTab("Decrypt", null, tabDecrypt, null);
 
 	}
 }

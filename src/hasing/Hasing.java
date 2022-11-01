@@ -10,7 +10,11 @@ import java.security.NoSuchAlgorithmException;
 public class Hasing {
 
 	public static final String MD5 = "MD5";
-	public static final String SHA224 = "SHA-1";
+	public static final String SHA1 = "SHA-1";
+	public static final String SHA224 = "SHA-224";
+	public static final String SHA256 = "SHA-256";
+	public static final String SHA384 = "SHA-384";
+	public static final String SHA512 = "SHA-512";
 
 	private String name;
 	private MessageDigest mDigest;
@@ -89,7 +93,7 @@ public class Hasing {
 	}
 
 	public static void main(String[] args) {
-		Hasing md5 = new Hasing(Hasing.SHA224);
+		Hasing md5 = new Hasing(Hasing.SHA512);
 		System.out.println(md5.getHashText("Đại học nông lâm"));
 		System.out.println(md5.getHashText("Đại học nông lâm"));
 		System.out.println(md5.getHashText("Đại học nông lâm"));

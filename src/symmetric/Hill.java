@@ -37,7 +37,6 @@ public class Hill {
 			for (int j = 0; j < key[i].length; j++) {
 				result += alphabet[key[i][j]] + " ";
 			}
-			result += "\n";
 		}
 		return result;
 	}
@@ -65,6 +64,47 @@ public class Hill {
 		return result;
 	}
 
+	public String encryptWithSpecialChar(String input, String key) {
+		int[][] convertKey = convertKeyToInt(key);
+
+		String fillerInput = Alphabet.filterInput(input);
+		char[] inputChars = fillerInput.toCharArray();
+
+		char[] simpleChar = new char[inputChars.length];
+		char[] specialChar = new char[inputChars.length];
+
+		String newInput = "";
+		for (int i = 0; i < inputChars.length; i++) {
+			if (Alphabet.include(inputChars[i])) {
+				simpleChar[i] = inputChars[i];
+				newInput += inputChars[i];
+			} else {
+				specialChar[i] += inputChars[i];
+			}
+		}
+		String encrypt = encrypt(newInput, convertKey);
+		char[] encryptChar = encrypt.toCharArray();
+		String output = "";
+		int j = 0;
+		for (int i = 0; i < simpleChar.length; i++) {
+			if (simpleChar[i] + "".length() == 0) {
+				output += specialChar[i];
+			} else {
+				output += encryptChar[j];
+				j++;
+			}
+		}
+		if (encryptChar.length > newInput.length()) {
+			output += encryptChar[encryptChar.length - 1];
+		}
+		if (inputChars.length % 2 == 0) {
+			output += 0;
+		} else {
+			output += 1;
+		}
+		return output;
+	}
+
 	public String decrypt(String input, int[][] key) {
 		String result = "";
 		char[] alphabet = Alphabet.ALPHABET;
@@ -86,6 +126,44 @@ public class Hill {
 		return result;
 	}
 
+	public String decryptWithSpecialChar(String input, String key) {
+		int[][] convertKey = convertKeyToInt(key);
+
+		int isOdd = Integer.parseInt(input.substring(input.length() - 1));
+		input = input.substring(0, input.length() - 1);
+		String fillerInput = Alphabet.filterInput(input);
+		char[] inputChars = fillerInput.toCharArray();
+
+		char[] simpleChar = new char[inputChars.length];
+		char[] specialChar = new char[inputChars.length];
+
+		String newInput = "";
+		for (int i = 0; i < inputChars.length; i++) {
+			if (Alphabet.include(inputChars[i])) {
+				simpleChar[i] = inputChars[i];
+				newInput += inputChars[i];
+			} else {
+				specialChar[i] += inputChars[i];
+			}
+		}
+		String decrypt = decrypt(newInput, convertKey);
+		char[] decryptChar = decrypt.toCharArray();
+		String output = "";
+		int j = 0;
+		for (int i = 0; i < simpleChar.length; i++) {
+			if (simpleChar[i] + "".length() == 0) {
+				output += specialChar[i];
+			} else {
+				output += decryptChar[j];
+				j++;
+			}
+		}
+		if (isOdd == 1) {
+			output = output.substring(0, output.length() - 1);
+		}
+		return output;
+	}
+
 	public int inverseNum(int num) {
 		for (int i = 0; i < Alphabet.ALPHABET.length; i++) {
 			if (myMod((num * i), Alphabet.ALPHABET.length) == 1) {
@@ -99,9 +177,7 @@ public class Hill {
 		int[][] result = new int[2][2];
 		char[] alphabet = Alphabet.ALPHABET;
 		int detMaTrix = detMatrix(key);
-		System.out.println("det: " + detMaTrix);
 		int inverseDetMaTrix = inverseNum(detMaTrix);
-		System.out.println("inverseDetMaTrix: " + inverseDetMaTrix);
 		int[][] adjunctMatrix = adjunctMatrix(key);
 		for (int i = 0; i < adjunctMatrix.length; i++) {
 			for (int j = 0; j < adjunctMatrix[i].length; j++) {
@@ -152,15 +228,23 @@ public class Hill {
 			System.out.println();
 		}
 	}
-
+	public boolean checkKey(String input) {
+		try {
+			convertKeyToInt(input);
+			return true;
+		} catch (Exception e) {
+			e.fillInStackTrace();
+			return false;
+		}
+	}
 	public static void main(String[] args) {
 		Hill hill = new Hill();
 		int[][] key = hill.convertKeyToInt(Alphabet.ALPHABET[11] + " " + Alphabet.ALPHABET[8] + " "
 				+ Alphabet.ALPHABET[3] + " " + Alphabet.ALPHABET[7]);
 		hill.printKey(key);
-		String encrypt = hill.encrypt("DHNONGLAM", key);
+		String encrypt = hill.encryptWithSpecialChar("Lương Hữu Luânn", hill.convertKeyToString(key));
 		System.out.println(encrypt);
-		String decrypt = hill.decrypt(encrypt, key);
+		String decrypt = hill.decryptWithSpecialChar(encrypt, hill.convertKeyToString(key));
 		System.out.println(decrypt);
 
 	}
