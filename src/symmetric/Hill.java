@@ -1,13 +1,23 @@
 package symmetric;
 
+import symmetric.Alphabet.ALPHABET;
+
 /* su dung khoa k la 1 ma tran 2x2 
  * a b
  * c d
  * ma hoa bang cach chia input thanh cac tap 2 phan tu
  * */
 public class Hill {
+	private ALPHABET useAlphabet = ALPHABET.ENGLISH;
+	private int alphabetLength = Alphabet.ENGLISH_ALPHABET.length;
+
 	public int[][] createKey() {
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		int[][] result = new int[2][2];
 		result[0][0] = (int) Math.floor(Math.random() * alphabet.length);
 		result[0][1] = (int) Math.floor(Math.random() * alphabet.length);
@@ -23,15 +33,20 @@ public class Hill {
 	public int[][] convertKeyToInt(String key) {
 		int[][] result = new int[2][2];
 		String[] keys = key.trim().split(" ");
-		result[0][0] = Alphabet.getIndex(keys[0].charAt(0));
-		result[0][1] = Alphabet.getIndex(keys[1].charAt(0));
-		result[1][0] = Alphabet.getIndex(keys[2].charAt(0));
-		result[1][1] = Alphabet.getIndex(keys[3].charAt(0));
+		result[0][0] = Alphabet.getIndex(keys[0].charAt(0), useAlphabet);
+		result[0][1] = Alphabet.getIndex(keys[1].charAt(0), useAlphabet);
+		result[1][0] = Alphabet.getIndex(keys[2].charAt(0), useAlphabet);
+		result[1][1] = Alphabet.getIndex(keys[3].charAt(0), useAlphabet);
 		return result;
 	}
 
 	public String convertKeyToString(int[][] key) {
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		String result = "";
 		for (int i = 0; i < key.length; i++) {
 			for (int j = 0; j < key[i].length; j++) {
@@ -43,7 +58,12 @@ public class Hill {
 
 	public String encrypt(String input, int[][] key) {
 		String result = "";
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		if (input.length() % 2 != 0) {
 			input += "*";
 		}
@@ -52,11 +72,11 @@ public class Hill {
 		for (int i = 0; i < inputChars.length; i += 2) {
 			int x = -1;
 			int y = -1;
-			if (Alphabet.include(inputChars[i])) {
-				x = Alphabet.getIndex(inputChars[i]);
+			if (Alphabet.include(inputChars[i], useAlphabet)) {
+				x = Alphabet.getIndex(inputChars[i], useAlphabet);
 			}
-			if (Alphabet.include(inputChars[i + 1])) {
-				y = Alphabet.getIndex(inputChars[i + 1]);
+			if (Alphabet.include(inputChars[i + 1], useAlphabet)) {
+				y = Alphabet.getIndex(inputChars[i + 1], useAlphabet);
 			}
 			result += alphabet[myMod(((key[0][0] * x) + (key[0][1] * y)), alphabet.length)];
 			result += alphabet[myMod(((key[1][0] * x) + (key[1][1] * y)), alphabet.length)];
@@ -75,7 +95,7 @@ public class Hill {
 
 		String newInput = "";
 		for (int i = 0; i < inputChars.length; i++) {
-			if (Alphabet.include(inputChars[i])) {
+			if (Alphabet.include(inputChars[i], useAlphabet)) {
 				simpleChar[i] = inputChars[i];
 				newInput += inputChars[i];
 			} else {
@@ -107,18 +127,23 @@ public class Hill {
 
 	public String decrypt(String input, int[][] key) {
 		String result = "";
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		int[][] inverseMatrix = inverseMatrix(key);
 		String fillerInput = Alphabet.filterInput(input);
 		char[] inputChars = fillerInput.toCharArray();
 		for (int i = 0; i < inputChars.length; i += 2) {
 			int x = -1;
 			int y = -1;
-			if (Alphabet.include(inputChars[i])) {
-				x = Alphabet.getIndex(inputChars[i]);
+			if (Alphabet.include(inputChars[i], useAlphabet)) {
+				x = Alphabet.getIndex(inputChars[i], useAlphabet);
 			}
-			if (Alphabet.include(inputChars[i + 1])) {
-				y = Alphabet.getIndex(inputChars[i + 1]);
+			if (Alphabet.include(inputChars[i + 1], useAlphabet)) {
+				y = Alphabet.getIndex(inputChars[i + 1], useAlphabet);
 			}
 			result += alphabet[myMod((inverseMatrix[0][0] * x + inverseMatrix[0][1] * y), alphabet.length)];
 			result += alphabet[myMod((inverseMatrix[1][0] * x + inverseMatrix[1][1] * y), alphabet.length)];
@@ -139,7 +164,7 @@ public class Hill {
 
 		String newInput = "";
 		for (int i = 0; i < inputChars.length; i++) {
-			if (Alphabet.include(inputChars[i])) {
+			if (Alphabet.include(inputChars[i], useAlphabet)) {
 				simpleChar[i] = inputChars[i];
 				newInput += inputChars[i];
 			} else {
@@ -165,8 +190,8 @@ public class Hill {
 	}
 
 	public int inverseNum(int num) {
-		for (int i = 0; i < Alphabet.ALPHABET.length; i++) {
-			if (myMod((num * i), Alphabet.ALPHABET.length) == 1) {
+		for (int i = 0; i < alphabetLength; i++) {
+			if (myMod((num * i), alphabetLength) == 1) {
 				return i;
 			}
 		}
@@ -175,7 +200,12 @@ public class Hill {
 
 	public int[][] inverseMatrix(int[][] key) {
 		int[][] result = new int[2][2];
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		int detMaTrix = detMatrix(key);
 		int inverseDetMaTrix = inverseNum(detMaTrix);
 		int[][] adjunctMatrix = adjunctMatrix(key);
@@ -200,7 +230,12 @@ public class Hill {
 	}
 
 	public int[][] adjunctMatrix(int[][] matrix) {
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		int[][] result = new int[2][2];
 		result[0][0] = myMod(matrix[1][1], alphabet.length);
 		result[0][1] = myMod(-matrix[0][1], alphabet.length);
@@ -228,7 +263,10 @@ public class Hill {
 			System.out.println();
 		}
 	}
+
 	public boolean checkKey(String input) {
+		if (input.length() == 0)
+			return false;
 		try {
 			convertKeyToInt(input);
 			return true;
@@ -237,10 +275,28 @@ public class Hill {
 			return false;
 		}
 	}
+
+	public void setAlphabet(ALPHABET useAlphabet) {
+		this.useAlphabet = useAlphabet;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			this.alphabetLength = Alphabet.ENGLISH_ALPHABET.length;
+		} else {
+			this.alphabetLength = Alphabet.VIETNAMESE_ALPHABET.length;
+		}
+	}
+
+	public ALPHABET getUseAlphabet() {
+		return useAlphabet;
+	}
+
+	public int getAlphabetLength() {
+		return alphabetLength;
+	}
+
 	public static void main(String[] args) {
 		Hill hill = new Hill();
-		int[][] key = hill.convertKeyToInt(Alphabet.ALPHABET[11] + " " + Alphabet.ALPHABET[8] + " "
-				+ Alphabet.ALPHABET[3] + " " + Alphabet.ALPHABET[7]);
+		int[][] key = hill.convertKeyToInt(Alphabet.ENGLISH_ALPHABET[11] + " " + Alphabet.ENGLISH_ALPHABET[8] + " "
+				+ Alphabet.ENGLISH_ALPHABET[3] + " " + Alphabet.ENGLISH_ALPHABET[7]);
 		hill.printKey(key);
 		String encrypt = hill.encryptWithSpecialChar("Lương Hữu Luânn", hill.convertKeyToString(key));
 		System.out.println(encrypt);

@@ -164,7 +164,6 @@ public class ShaEncryptGUI extends JPanel {
 
 	public void onEncrypt() {
 		hasing = Hasing.getIntance(getSelected());
-		System.out.println(hasing.getName());
 		if (textAreaPlainText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to encrypt");
 		} else {

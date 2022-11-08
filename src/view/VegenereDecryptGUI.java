@@ -8,15 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import symmetric.Alphabet.ALPHABET;
 import symmetric.Vegenere;
 
 public class VegenereDecryptGUI extends JPanel {
@@ -31,6 +34,7 @@ public class VegenereDecryptGUI extends JPanel {
 	private JTextField textFieldKeyLenght;
 	private Vegenere vegenere;
 	private JTextArea textAreaPlainText, textAreaCipherText;
+	private JRadioButton rdoUseEnglish, rdoUseVietNamese;
 
 	public VegenereDecryptGUI() {
 		vegenere = new Vegenere();
@@ -68,7 +72,7 @@ public class VegenereDecryptGUI extends JPanel {
 		textFieldKey.setColumns(10);
 
 		JPanel panelCipherText = new JPanel();
-		panelCipherText.setBounds(31, 62, 686, 145);
+		panelCipherText.setBounds(31, 70, 686, 140);
 		add(panelCipherText);
 		panelCipherText.setLayout(new GridLayout(1, 1, 0, 0));
 
@@ -84,7 +88,7 @@ public class VegenereDecryptGUI extends JPanel {
 		scrollPaneCipherText.setColumnHeaderView(lblCipherText);
 
 		JPanel panelPlainText = new JPanel();
-		panelPlainText.setBounds(31, 218, 686, 145);
+		panelPlainText.setBounds(31, 225, 686, 140);
 		add(panelPlainText);
 		panelPlainText.setLayout(new GridLayout(1, 1, 0, 0));
 
@@ -159,6 +163,38 @@ public class VegenereDecryptGUI extends JPanel {
 				onDecrypt();
 			}
 		});
+
+		JPanel panelAlphabet = new JPanel();
+		panelAlphabet.setBounds(31, 45, 686, 20);
+		add(panelAlphabet);
+		panelAlphabet.setLayout(null);
+
+		ButtonGroup btnGroups = new ButtonGroup();
+
+		 rdoUseEnglish = new JRadioButton("Use English alphabet");
+		btnGroups.add(rdoUseEnglish);
+		rdoUseEnglish.setBounds(180, 0, 160, 20);
+		panelAlphabet.add(rdoUseEnglish);
+		rdoUseEnglish.setSelected(true);
+		rdoUseEnglish.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				vegenere.setAlphabet(ALPHABET.ENGLISH);
+			}
+		});
+
+		 rdoUseVietNamese = new JRadioButton("Use Vietnamese alphabet");
+		btnGroups.add(rdoUseVietNamese);
+		rdoUseVietNamese.setBounds(340, 0, 200, 20);
+		panelAlphabet.add(rdoUseVietNamese);
+		rdoUseVietNamese.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				vegenere.setAlphabet(ALPHABET.VIETNAMESE);
+			}
+		});
 	}
 
 	public void onImportKey() {
@@ -168,8 +204,15 @@ public class VegenereDecryptGUI extends JPanel {
 			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
 				String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
 				if (keyType.trim().toLowerCase().equals("vegenere")) {
-					String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-					fileContent = fileContent.substring(fileContent.indexOf(keyType) + 9);
+					String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
+					if (alphabetType.equalsIgnoreCase("ENGLISH")) {
+						rdoUseEnglish.setSelected(true);
+						vegenere.setAlphabet(ALPHABET.ENGLISH);
+					} else {
+						rdoUseVietNamese.setSelected(true);
+						vegenere.setAlphabet(ALPHABET.VIETNAMESE);
+					}
+					String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
 					textFieldKey.setText(fileContent.trim());
 				} else {
 					JOptionPane.showMessageDialog(null, "This is not vegenere key");

@@ -3,12 +3,22 @@ package symmetric;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import symmetric.Alphabet.ALPHABET;
+
 // input includes key lenght and keys
 // EX: 4 10 13 2 7: 4 is key lenght and 10 13 2 7 is key
 public class Vegenere {
+	
+	private ALPHABET useAlphabet = ALPHABET.ENGLISH;
+	private int alphabetLength = Alphabet.ENGLISH_ALPHABET.length;
 
 	public String createKey(int keyLenght) {
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		String result = "";
 		int count = keyLenght;
 		while (count > 0) {
@@ -33,8 +43,8 @@ public class Vegenere {
 					throw new Error("Excess of some key values");
 				}
 				for (int i = 0; i < keyLengh; i++) {
-					if (Integer.parseInt(stk.nextToken()) > Alphabet.ALPHABET.length) {
-						throw new Error("key value out of " + Alphabet.ALPHABET.length);
+					if (Integer.parseInt(stk.nextToken()) > alphabetLength) {
+						throw new Error("key value out of " + keyLengh);
 					}
 				}
 				return input.substring(input.indexOf(" ") + 1);
@@ -58,7 +68,7 @@ public class Vegenere {
 					return false;
 				}
 				for (int i = 0; i < keyLengh; i++) {
-					if (Integer.parseInt(stk.nextToken()) > Alphabet.ALPHABET.length) {
+					if (Integer.parseInt(stk.nextToken()) > alphabetLength) {
 						return false;
 					}
 				}
@@ -72,7 +82,7 @@ public class Vegenere {
 	public boolean checkKey(String input) {
 		String[] inputSplit = input.split(" ");
 		for (String s : inputSplit) {
-			if (s.length() != 1 && !Alphabet.include(s.charAt(0))) {
+			if (s.length() != 1 && !Alphabet.include(s.charAt(0), useAlphabet)) {
 				return false;
 			}
 		}
@@ -80,20 +90,25 @@ public class Vegenere {
 	}
 
 	public String encrypt(String input, String key) {
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		String fillerInput = Alphabet.filterInput(input);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		String[] keysString = key.split(" ");
 		int[] keys = new int[keysString.length];
 		for (int i = 0; i < keysString.length; i++) {
-			keys[i] = Alphabet.getIndex(keysString[i].charAt(0));
+			keys[i] = Alphabet.getIndex(keysString[i].charAt(0), useAlphabet);
 		}
 		int indexKey = 0;
 		for (int i = 0; i < inputChars.length; i++) {
-			if (Alphabet.include(inputChars[i])) {
-				int indexChar = Alphabet.getIndex(inputChars[i]);
-				result += (indexChar + keys[indexKey] < 29) ? alphabet[indexChar + keys[indexKey]]
+			if (Alphabet.include(inputChars[i], useAlphabet)) {
+				int indexChar = Alphabet.getIndex(inputChars[i], useAlphabet);
+				result += (indexChar + keys[indexKey] < alphabetLength) ? alphabet[indexChar + keys[indexKey]]
 						: alphabet[(indexChar + keys[indexKey]) % alphabet.length];
 				indexKey = ++indexKey % keys.length;
 			} else {
@@ -104,19 +119,24 @@ public class Vegenere {
 	}
 
 	public String decrypt(String input, String key) {
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = null;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			alphabet = Alphabet.ENGLISH_ALPHABET;
+		} else {
+			alphabet = Alphabet.VIETNAMESE_ALPHABET;
+		}
 		String fillerInput = Alphabet.filterInput(input);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		String[] keysString = key.split(" ");
 		int[] keys = new int[keysString.length];
 		for (int i = 0; i < keysString.length; i++) {
-			keys[i] = Alphabet.getIndex(keysString[i].charAt(0));
+			keys[i] = Alphabet.getIndex(keysString[i].charAt(0), useAlphabet);
 		}
 		int indexKey = 0;
 		for (int i = 0; i < inputChars.length; i++) {
-			if (Alphabet.include(inputChars[i])) {
-				int indexChar = Alphabet.getIndex(inputChars[i]);
+			if (Alphabet.include(inputChars[i], useAlphabet)) {
+				int indexChar = Alphabet.getIndex(inputChars[i], useAlphabet);
 				result += (indexChar - keys[indexKey] >= 0) ? alphabet[indexChar - keys[indexKey]]
 						: alphabet[(indexChar - keys[indexKey]) + alphabet.length];
 				indexKey = ++indexKey % keys.length;
@@ -125,6 +145,22 @@ public class Vegenere {
 			}
 		}
 		return result;
+	}
+	
+	public void setAlphabet(ALPHABET useAlphabet) {
+		this.useAlphabet = useAlphabet;
+		if (useAlphabet == ALPHABET.ENGLISH) {
+			this.alphabetLength = Alphabet.ENGLISH_ALPHABET.length;
+		} else {
+			this.alphabetLength = Alphabet.VIETNAMESE_ALPHABET.length;
+		}
+	}
+
+	public ALPHABET getUseAlphabet() {
+		return useAlphabet;
+	}
+	public int getAlphabetLength() {
+		return alphabetLength;
 	}
 
 	public static void test() {

@@ -8,15 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import symmetric.Alphabet.ALPHABET;
 import symmetric.Caesar;
 
 public class CeasarDecryptGUI extends JPanel {
@@ -54,7 +57,7 @@ public class CeasarDecryptGUI extends JPanel {
 		textFieldKey.setColumns(10);
 
 		JPanel panelCipherText = new JPanel();
-		panelCipherText.setBounds(31, 62, 686, 145);
+		panelCipherText.setBounds(31, 70, 686, 140);
 		add(panelCipherText);
 		panelCipherText.setLayout(new GridLayout(1, 1, 0, 0));
 
@@ -70,7 +73,7 @@ public class CeasarDecryptGUI extends JPanel {
 		scrollPaneCipherText.setColumnHeaderView(lblCipherText);
 
 		JPanel panelPlainText = new JPanel();
-		panelPlainText.setBounds(31, 218, 686, 145);
+		panelPlainText.setBounds(31, 225, 686, 140);
 		add(panelPlainText);
 		panelPlainText.setLayout(new GridLayout(1, 1, 0, 0));
 
@@ -126,6 +129,7 @@ public class CeasarDecryptGUI extends JPanel {
 		btnDecrypt.setFont(btnFont);
 		btnDecrypt.setBackground(Color.BLUE);
 		btnDecrypt.setPreferredSize(dimForBtn);
+		panelBtns.add(btnDecrypt);
 		btnDecrypt.addActionListener(new ActionListener() {
 
 			@Override
@@ -137,7 +141,38 @@ public class CeasarDecryptGUI extends JPanel {
 				}
 			}
 		});
-		panelBtns.add(btnDecrypt);
+
+		JPanel panelAlphabet = new JPanel();
+		panelAlphabet.setBounds(31, 45, 686, 20);
+		add(panelAlphabet);
+		panelAlphabet.setLayout(null);
+
+		ButtonGroup btnGroups = new ButtonGroup();
+
+		JRadioButton rdoUseEnglish = new JRadioButton("Use English alphabet");
+		btnGroups.add(rdoUseEnglish);
+		rdoUseEnglish.setBounds(180, 0, 160, 20);
+		panelAlphabet.add(rdoUseEnglish);
+		rdoUseEnglish.setSelected(true);
+		rdoUseEnglish.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ceasar.setAlphabet(ALPHABET.ENGLISH);
+			}
+		});
+
+		JRadioButton rdoUseVietNamese = new JRadioButton("Use Vietnamese alphabet");
+		btnGroups.add(rdoUseVietNamese);
+		rdoUseVietNamese.setBounds(340, 0, 200, 20);
+		panelAlphabet.add(rdoUseVietNamese);
+		rdoUseVietNamese.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ceasar.setAlphabet(ALPHABET.VIETNAMESE);
+			}
+		});
 
 	}
 
@@ -154,18 +189,18 @@ public class CeasarDecryptGUI extends JPanel {
 		}
 	}
 
-
 	public void onDecrypt() {
 		try {
 			int key = Integer.parseInt(this.textFieldKey.getText().trim());
-			if (key > 28) {
-				JOptionPane.showMessageDialog(null, "Key is a number < 28, try again");
+			if (key > ceasar.getAlphabetLength() || key < 0) {
+				JOptionPane.showMessageDialog(null,
+						"Key is a number > -1 and <= " + ceasar.getAlphabetLength() + ", try again");
 			} else {
 				String decryptText = this.ceasar.decrypt(this.textAreaCipherText.getText(), key);
 				this.textAreaPlainText.setText(decryptText);
 			}
 		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(null, "Key is a number < 28, try again");
+			JOptionPane.showMessageDialog(null, "Key is a number > -1 and <= " + ceasar.getAlphabetLength() + ", try again");
 		}
 	}
 

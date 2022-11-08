@@ -163,6 +163,34 @@ public class FileUtils {
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Can not read this file");
 		}
+		return result.split(" ")[0];
+	}
+
+	public static String getKeyAlphabet(String path) {
+		String result = "";
+		try {
+			BufferedReader buffReader = new BufferedReader(new FileReader(path));
+			String line = buffReader.readLine();
+			result = line;
+			buffReader.close();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Can not read this file");
+		}
+		return result.split(" ")[1];
+	}
+
+	public static String readContentFile(String path) {
+		String result = "";
+		try {
+			BufferedReader buffReader = new BufferedReader(new FileReader(path));
+			String line = buffReader.readLine();
+			while ((line = buffReader.readLine()) != null) {
+				result += line + "\n";
+			}
+			buffReader.close();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Can not read this file");
+		}
 		return result;
 	}
 }

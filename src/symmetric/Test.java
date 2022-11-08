@@ -2,12 +2,11 @@ package symmetric;
 
 public class Test {
 	public static void main(String[] args) {
-		char[] alphabet = Alphabet.ALPHABET;
+		char[] alphabet = Alphabet.VIETNAMESE_ALPHABET;
 		System.out.println("Apl: " + new String(alphabet));
 		testCaesar();
 		testSubstitution();
 		testVegenere();
-		testAffine();
 //		Vegenere.test();
 	}
 
@@ -64,23 +63,6 @@ public class Test {
 		System.out.println("Key: " + key);
 		System.out.println("input: " + encrypt);
 		String decrypt = vegenere.decrypt(encrypt, key);
-		System.out.println("Giải mã: " + decrypt + "\n");
-		System.out.println("====================");
-	}
-
-	public static void testAffine() {
-		System.out.println("====================");
-		System.out.println("Mã hóa affine\n");
-		String key = Affine.createKey();
-		System.out.println("Key: " + key);
-		String input = "Lương Hữu Luân ay";
-		System.out.println("input: " + input);
-		String encrypt = Affine.encrypt(input, key);
-		System.out.println("Mã hóa: " + encrypt + "\n");
-		System.out.println("Giải mã affine\n");
-		System.out.println("Key: " + key);
-		System.out.println("input: " + encrypt);
-		String decrypt = Affine.decrypt(encrypt, key);
 		System.out.println("Giải mã: " + decrypt + "\n");
 		System.out.println("====================");
 	}

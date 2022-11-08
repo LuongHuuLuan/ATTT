@@ -1,10 +1,10 @@
 package symmetric;
 
 public class Alphabet {
-	public static char[] ALPHABET = { 'a', 'ă', 'â', 'b', 'c', 'd', 'đ', 'e', 'ê', 'g', 'h', 'i', 'k', 'l', 'm', 'n',
-			'o', 'ô', 'ơ', 'p', 'q', 'r', 's', 't', 'u', 'ư', 'v', 'x', 'y'};
-//	public static final char[] ALPHABET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-//			'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	public static char[] VIETNAMESE_ALPHABET = { 'a', 'ă', 'â', 'b', 'c', 'd', 'đ', 'e', 'ê', 'g', 'h', 'i', 'k', 'l',
+			'm', 'n', 'o', 'ô', 'ơ', 'p', 'q', 'r', 's', 't', 'u', 'ư', 'v', 'x', 'y' };
+	public static final char[] ENGLISH_ALPHABET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 	public static char[] UNIKEY_A1 = { 'á', 'à', 'ã', 'ạ', 'ả' };
 	public static char[] UNIKEY_A2 = { 'ắ', 'ằ', 'ẳ', 'ẵ', 'ặ' };
 	public static char[] UNIKEY_A3 = { 'ấ', 'ầ', 'ẩ', 'ẫ', 'ậ' };
@@ -16,6 +16,10 @@ public class Alphabet {
 	public static char[] UNIKEY_O3 = { 'ờ', 'ớ', 'ở', 'ỡ', 'ợ' };
 	public static char[] UNIKEY_U1 = { 'ù', 'ú', 'ủ', 'ũ', 'ụ' };
 	public static char[] UNIKEY_U2 = { 'ừ', 'ứ', 'ử', 'ữ', 'ự' };
+
+	public enum ALPHABET {
+		ENGLISH, VIETNAMESE
+	}
 
 	public static String filterInput(String input) {
 		String result = input;
@@ -62,19 +66,35 @@ public class Alphabet {
 		return result;
 	}
 
-	public static boolean include(char c) {
-		for (int i = 0; i < ALPHABET.length; i++) {
-			if (ALPHABET[i] == c) {
-				return true;
+	public static boolean include(char c, ALPHABET alphabet) {
+		if (alphabet == ALPHABET.ENGLISH) {
+			for (int i = 0; i < ENGLISH_ALPHABET.length; i++) {
+				if (ENGLISH_ALPHABET[i] == c) {
+					return true;
+				}
+			}
+		} else {
+			for (int i = 0; i < VIETNAMESE_ALPHABET.length; i++) {
+				if (VIETNAMESE_ALPHABET[i] == c) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
-	public static int getIndex(char c) {
-		for (int i = 0; i < ALPHABET.length; i++) {
-			if (ALPHABET[i] == c) {
-				return i;
+	public static int getIndex(char c, ALPHABET alphabet) {
+		if (alphabet == ALPHABET.ENGLISH) {
+			for (int i = 0; i < ENGLISH_ALPHABET.length; i++) {
+				if (ENGLISH_ALPHABET[i] == c) {
+					return i;
+				}
+			}
+		} else {
+			for (int i = 0; i < VIETNAMESE_ALPHABET.length; i++) {
+				if (VIETNAMESE_ALPHABET[i] == c) {
+					return i;
+				}
 			}
 		}
 		return -1;

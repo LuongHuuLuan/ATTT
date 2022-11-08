@@ -8,15 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import symmetric.Alphabet.ALPHABET;
 import symmetric.Substitution;
 
 public class SubstitutionEncryptGUI extends JPanel {
@@ -30,6 +33,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 	private JTextField textFieldKey;
 	private Substitution substitution;
 	private JTextArea textAreaPlainText, textAreaCipherText;
+	private JRadioButton rdoUseEnglish, rdoUseVietNamese;
 
 	public SubstitutionEncryptGUI() {
 		substitution = new Substitution();
@@ -57,7 +61,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 		textFieldKey.setColumns(10);
 
 		JPanel panelPlainText = new JPanel();
-		panelPlainText.setBounds(31, 62, 686, 145);
+		panelPlainText.setBounds(31, 70, 686, 140);
 		add(panelPlainText);
 		panelPlainText.setLayout(new GridLayout(1, 1, 0, 0));
 
@@ -73,7 +77,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 		scrollPanePlainText.setColumnHeaderView(lblPlainText);
 
 		JPanel panelCipherText = new JPanel();
-		panelCipherText.setBounds(31, 218, 686, 145);
+		panelCipherText.setBounds(31, 225, 686, 140);
 		add(panelCipherText);
 		panelCipherText.setLayout(new GridLayout(1, 1, 0, 0));
 
@@ -177,6 +181,38 @@ public class SubstitutionEncryptGUI extends JPanel {
 			}
 		});
 
+		JPanel panelAlphabet = new JPanel();
+		panelAlphabet.setBounds(31, 45, 686, 20);
+		add(panelAlphabet);
+		panelAlphabet.setLayout(null);
+
+		ButtonGroup btnGroups = new ButtonGroup();
+
+		 rdoUseEnglish = new JRadioButton("Use English alphabet");
+		btnGroups.add(rdoUseEnglish);
+		rdoUseEnglish.setBounds(180, 0, 160, 20);
+		panelAlphabet.add(rdoUseEnglish);
+		rdoUseEnglish.setSelected(true);
+		rdoUseEnglish.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				substitution.setAlphabet(ALPHABET.ENGLISH);
+			}
+		});
+
+		 rdoUseVietNamese = new JRadioButton("Use Vietnamese alphabet");
+		btnGroups.add(rdoUseVietNamese);
+		rdoUseVietNamese.setBounds(340, 0, 200, 20);
+		panelAlphabet.add(rdoUseVietNamese);
+		rdoUseVietNamese.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				substitution.setAlphabet(ALPHABET.VIETNAMESE);
+			}
+		});
+
 	}
 
 	public void onImportKey() {
@@ -186,8 +222,15 @@ public class SubstitutionEncryptGUI extends JPanel {
 			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
 				String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
 				if (keyType.trim().toLowerCase().equals("substitution")) {
-					String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-					fileContent = fileContent.substring(fileContent.indexOf(keyType) + 13);
+					String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
+					if (alphabetType.equalsIgnoreCase("ENGLISH")) {
+						rdoUseEnglish.setSelected(true);
+						substitution.setAlphabet(ALPHABET.ENGLISH);
+					} else {
+						rdoUseVietNamese.setSelected(true);
+						substitution.setAlphabet(ALPHABET.VIETNAMESE);
+					}
+					String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
 					textFieldKey.setText(fileContent.trim());
 				} else {
 					JOptionPane.showMessageDialog(null, "This is not substitution key");
@@ -217,13 +260,19 @@ public class SubstitutionEncryptGUI extends JPanel {
 	}
 
 	public void onSaveKey() {
-		String saveContent = "substitution\n";
+		String saveContent = "substitution";
+		if (substitution.getUseAlphabet() == ALPHABET.ENGLISH) {
+			saveContent += " ENGLISH\n";
+		} else {
+			saveContent += " VIETNAMESE\n";
+		}
 		String key = textFieldKey.getText().trim();
-		if (key.length() == 29) {
+		if (key.length() == substitution.getAlphabetLength()) {
 			saveContent += key;
 			FileUtils.onSave(saveContent);
 		} else {
-			JOptionPane.showMessageDialog(null, "Key is a string have lenght is 29, try again");
+			JOptionPane.showMessageDialog(null,
+					"Key is a string have lenght is " + substitution.getAlphabetLength() + ", try again");
 		}
 	}
 
@@ -240,8 +289,9 @@ public class SubstitutionEncryptGUI extends JPanel {
 			JOptionPane.showMessageDialog(null, "Nothing to encrypt");
 		} else {
 			String key = this.textFieldKey.getText().trim();
-			if (key.length() != 29) {
-				JOptionPane.showMessageDialog(null, "Key is a string have lenght is 29, try again");
+			if (key.length() != substitution.getAlphabetLength()) {
+				JOptionPane.showMessageDialog(null,
+						"Key is a string have lenght is " + substitution.getAlphabetLength() + ", try again");
 			} else {
 				String encryptText = substitution.encrypt(this.textAreaPlainText.getText(), key);
 				this.textAreaCipherText.setText(encryptText);

@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 import javax.crypto.SecretKey;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,9 +30,6 @@ public class AesDecryptGUI extends JPanel {
 	private Dimension dimForBtn = new Dimension(115, 40);
 	private Font btnFont = new Font("Tahoma", Font.BOLD, 12);
 	private Font labelFont = new Font("Tahoma", Font.BOLD, 16);
-	private DefaultComboBoxModel<String> modelCombobox = new DefaultComboBoxModel<String>(
-			new String[] { "128 bit", "192 bit", "256 bit" });
-	private JComboBox<String> comboBoxKeySize;
 	private JTextArea textAreaPlainText, textAreaCipherText;
 	private JPanel panelKey;
 	private JLabel lblKey;
@@ -52,26 +47,9 @@ public class AesDecryptGUI extends JPanel {
 		lblTool.setBounds(0, 438, 744, 14);
 		add(lblTool);
 
-		JPanel panelKeySize = new JPanel();
-		panelKeySize.setBounds(31, 11, 304, 30);
-		add(panelKeySize);
-		panelKeySize.setLayout(null);
-
-		JLabel lblKeySize = new JLabel("Choose key size:");
-		lblKeySize.setBounds(0, 6, 136, 20);
-		lblKeySize.setFont(new Font("Tahoma", Font.BOLD, 16));
-		panelKeySize.add(lblKeySize);
-
-		comboBoxKeySize = new JComboBox<String>();
-		comboBoxKeySize.setModel(modelCombobox);
-		comboBoxKeySize.setBounds(146, 5, 82, 23);
-		comboBoxKeySize.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		panelKeySize.add(comboBoxKeySize);
-		comboBoxKeySize.setEnabled(false);
-
 		panelKey = new JPanel();
 		panelKey.setBackground(new Color(255, 128, 128));
-		panelKey.setBounds(334, 11, 383, 30);
+		panelKey.setBounds(31, 11, 686, 30);
 		add(panelKey);
 		panelKey.setLayout(null);
 
@@ -79,7 +57,7 @@ public class AesDecryptGUI extends JPanel {
 		lblKey.setForeground(new Color(255, 255, 255));
 		lblKey.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblKey.setHorizontalAlignment(SwingConstants.CENTER);
-		lblKey.setBounds(0, 0, 383, 30);
+		lblKey.setBounds(0, 0, 686, 30);
 		panelKey.add(lblKey);
 
 		JPanel panelCipherText = new JPanel();
@@ -187,14 +165,6 @@ public class AesDecryptGUI extends JPanel {
 			try {
 				SecretKey key = (SecretKey) FileUtils.readObjectFile(choose.getAbsolutePath());
 				if (key.getAlgorithm().equalsIgnoreCase("AES")) {
-					int[] keyLenghts = { 16, 24, 32 };
-					int keyLenght = key.getEncoded().length;
-					for (int i = 0; i < keyLenghts.length; i++) {
-						if (keyLenght == keyLenghts[i]) {
-							comboBoxKeySize.setSelectedIndex(i);
-							break;
-						}
-					}
 					aes.setSecretKey(key);
 					keyIsReady();
 				} else {

@@ -19,6 +19,7 @@ import java.util.Base64;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -50,9 +51,11 @@ public class RsaEncryptGUI extends JPanel {
 	private JLabel lblKey;
 	private JRadioButton rdbtnUsePublicKey;
 	private JRadioButton rdbtnUsePrivateKey;
+	private JCheckBox cbEnterKeySize;
 
 	private byte[] byteData;
 	private RSA rsa;
+	private JTextField textFieldKeySize;
 
 	public RsaEncryptGUI() {
 		rsa = new RSA();
@@ -65,7 +68,7 @@ public class RsaEncryptGUI extends JPanel {
 		add(lblTool);
 
 		JPanel panelKeySize = new JPanel();
-		panelKeySize.setBounds(15, 11, 316, 30);
+		panelKeySize.setBounds(15, 11, 316, 69);
 		add(panelKeySize);
 		panelKeySize.setLayout(null);
 
@@ -79,6 +82,31 @@ public class RsaEncryptGUI extends JPanel {
 		comboBoxKeySize.setBounds(146, 5, 101, 23);
 		comboBoxKeySize.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		panelKeySize.add(comboBoxKeySize);
+
+		JLabel lblEnterKeySize = new JLabel("Enter key size:");
+		lblEnterKeySize.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblEnterKeySize.setBounds(0, 37, 126, 20);
+		panelKeySize.add(lblEnterKeySize);
+
+		cbEnterKeySize = new JCheckBox("");
+		cbEnterKeySize.setBounds(123, 38, 20, 20);
+		panelKeySize.add(cbEnterKeySize);
+		cbEnterKeySize.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (cbEnterKeySize.isSelected()) {
+					comboBoxKeySize.setEnabled(false);
+				} else {
+					comboBoxKeySize.setEnabled(true);
+				}
+			}
+		});
+
+		textFieldKeySize = new JTextField();
+		textFieldKeySize.setBounds(146, 37, 101, 23);
+		panelKeySize.add(textFieldKeySize);
+		textFieldKeySize.setColumns(10);
 
 		panelKey = new JPanel();
 		panelKey.setBackground(new Color(255, 128, 128));
@@ -259,6 +287,7 @@ public class RsaEncryptGUI extends JPanel {
 		rdbtnUsePrivateKey.setBounds(578, 306, 166, 23);
 		add(rdbtnUsePrivateKey);
 		btnGroup.add(rdbtnUsePrivateKey);
+
 	}
 
 	public void keyIsReady() {
@@ -278,7 +307,7 @@ public class RsaEncryptGUI extends JPanel {
 			X509EncodedKeySpec ks = new X509EncodedKeySpec(Base64.getDecoder().decode(textFieldPLKey.getText().trim()));
 			KeyFactory kf = KeyFactory.getInstance("RSA");
 			PublicKey pk = kf.generatePublic(ks);
-			
+
 			return pk;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -336,14 +365,27 @@ public class RsaEncryptGUI extends JPanel {
 	}
 
 	public void onCreateKey() {
-		int[] keyLenghts = { 1024, 2048, 4096 };
-		int keyLenght = keyLenghts[comboBoxKeySize.getSelectedIndex()];
-		rsa.createKey(keyLenght);
-		String publicKey = Base64.getEncoder().encodeToString(rsa.getPublicKey().getEncoded());
-		String privateKey = Base64.getEncoder().encodeToString(rsa.getPrivateKey().getEncoded());
-		textFieldPLKey.setText(publicKey);
-		textFieldPVKey.setText(privateKey);
-		keyIsReady();
+		try {
+			int keyLenght = 0;
+			if (!cbEnterKeySize.isSelected()) {
+				int[] keyLenghts = { 1024, 2048, 4096 };
+				keyLenght = keyLenghts[comboBoxKeySize.getSelectedIndex()];
+			} else {
+				keyLenght = Integer.parseInt(textFieldKeySize.getText());
+			}
+			if (keyLenght < 512) {
+				JOptionPane.showMessageDialog(null, "Key size is a number > 512");
+			} else {
+				rsa.createKey(keyLenght);
+				String publicKey = Base64.getEncoder().encodeToString(rsa.getPublicKey().getEncoded());
+				String privateKey = Base64.getEncoder().encodeToString(rsa.getPrivateKey().getEncoded());
+				textFieldPLKey.setText(publicKey);
+				textFieldPVKey.setText(privateKey);
+				keyIsReady();
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "Key size is a number > 512");
+		}
 	}
 
 	public void onSaveKey() {
@@ -418,7 +460,6 @@ public class RsaEncryptGUI extends JPanel {
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Can't encrypt, try again");
-			e.printStackTrace();
 		}
 	}
 }
