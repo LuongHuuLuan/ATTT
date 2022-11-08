@@ -6,6 +6,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -41,123 +42,6 @@ public class RSA {
 		this.privateKey = privateKey;
 	}
 
-	public void createKey(int keySize) {
-		try {
-			KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
-			switch (keySize) {
-			case 1024: {
-				keyGenerator.initialize(1024);
-				break;
-			}
-			case 2048: {
-				keyGenerator.initialize(2048);
-				break;
-			}
-			case 4096: {
-				keyGenerator.initialize(4096);
-				break;
-			}
-			default:
-				throw new IllegalArgumentException("Wrong keysize: must be equal to 1024, 2048 or 4096");
-			}
-			keyPair = keyGenerator.generateKeyPair();
-			publicKey = keyPair.getPublic();
-			privateKey = keyPair.getPrivate();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public int getMaxLenghtEncrypt(int byteLenght, RSA_KEY key) {
-		if (key == RSA_KEY.PUBLIC_KEY) {
-			if (byteLenght == 162)
-				return 117;
-			else if (byteLenght == 294) {
-				return 245;
-			} else {
-				return 501;
-			}
-		} else {
-			if (byteLenght < 700)
-				return 117;
-			else if (byteLenght < 1300) {
-				return 245;
-			} else {
-				return 501;
-			}
-		}
-	}
-
-	public int getMaxLenghtDecrypt(int byteLenght, RSA_KEY key) {
-		if (key == RSA_KEY.PUBLIC_KEY) {
-			if (byteLenght == 162)
-				return 128;
-			else if (byteLenght == 294) {
-				return 256;
-			} else {
-				return 512;
-			}
-		} else {
-			// private 128 256 512
-			if (byteLenght < 700)
-				return 128;
-			else if (byteLenght < 1300) {
-				return 256;
-			} else {
-				return 512;
-			}
-		}
-	}
-
-	public byte[] encrypt(byte[] plainTextByte, RSA_KEY keyType) {
-		// 117, 245, 501
-		byte[] result = null;
-		int maxLenght = 0;
-		try {
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-			if (keyType == RSA_KEY.PRIVATE_KEY) {
-				cipher.init(Cipher.ENCRYPT_MODE, this.privateKey);
-				maxLenght = getMaxLenghtEncrypt(this.privateKey.getEncoded().length, RSA_KEY.PRIVATE_KEY);
-			} else {
-				cipher.init(Cipher.ENCRYPT_MODE, this.publicKey);
-				maxLenght = getMaxLenghtEncrypt(this.publicKey.getEncoded().length, RSA_KEY.PUBLIC_KEY);
-			}
-			int byteDiv = plainTextByte.length / maxLenght;
-			int byteRest = plainTextByte.length % maxLenght;
-			for (int i = 0; i < byteDiv; i++) {
-				int startByte = maxLenght * i;
-				int offsetByte = maxLenght * i + maxLenght;
-				byte[] subByteArr = subByteArr(plainTextByte, startByte, offsetByte);
-				byte[] cipherByte = cipher.doFinal(subByteArr);
-				if (i == 0) {
-					result = cipherByte;
-				} else {
-					result = mergeByteArr(result, cipherByte);
-				}
-			}
-			if (byteRest != 0) {
-				byte[] subByteArr = subByteArr(plainTextByte, plainTextByte.length - byteRest, plainTextByte.length);
-				byte[] cipherByte = cipher.doFinal(subByteArr);
-				if (result == null) {
-					result = cipherByte;
-				} else
-					result = mergeByteArr(result, cipherByte);
-			}
-			return result;
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public byte[] mergeByteArr(byte[] arr1, byte[] arr2) {
 		byte[] result = new byte[arr1.length + arr2.length];
 		int offset = 0;
@@ -172,51 +56,52 @@ public class RSA {
 		return result;
 	}
 
-	public byte[] subByteArr(byte[] arr, int start, int offset) {
-		byte[] result = new byte[offset - start];
-		int j = 0;
-		for (int i = start; i < offset; i++) {
-			result[j] = arr[i];
-			j++;
+	public void createKey(int keySize) {
+		try {
+			KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
+			keyGenerator.initialize(keySize);
+			keyPair = keyGenerator.generateKeyPair();
+			publicKey = keyPair.getPublic();
+			privateKey = keyPair.getPrivate();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
 		}
-		return result;
 	}
 
-	public byte[] decrypt(byte[] cipherTextByte, RSA_KEY keyType) {
-		// 128 256 512
+	public byte[] encrypt(byte[] plainTextByte, RSA_KEY keyType) {
+		// 117, 245, 501
 		byte[] result = null;
-		int maxLenght = 0;
 		try {
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 			if (keyType == RSA_KEY.PRIVATE_KEY) {
-				cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
-				maxLenght = getMaxLenghtDecrypt(this.privateKey.getEncoded().length, RSA_KEY.PRIVATE_KEY);
+				cipher.init(Cipher.ENCRYPT_MODE, this.privateKey);
 			} else {
-				cipher.init(Cipher.DECRYPT_MODE, this.publicKey);
-				maxLenght = getMaxLenghtDecrypt(this.publicKey.getEncoded().length, RSA_KEY.PUBLIC_KEY);
+				cipher.init(Cipher.ENCRYPT_MODE, this.publicKey);
 			}
-			int byteDiv = cipherTextByte.length / maxLenght;
-			int byteRest = cipherTextByte.length % maxLenght;
-			for (int i = 0; i < byteDiv; i++) {
-				int startByte = maxLenght * i;
-				int offsetByte = maxLenght * i + maxLenght;
-				byte[] subByteArr = subByteArr(cipherTextByte, startByte, offsetByte);
-				byte[] cipherByte = cipher.doFinal(subByteArr);
-				if (i == 0) {
-					result = cipherByte;
+			int outputLenght = cipher.getOutputSize(plainTextByte.length) - 11;
+			int countBlock = plainTextByte.length / outputLenght;
+			int restBlock = plainTextByte.length % outputLenght;
+			for (int i = 0; i < countBlock; i++) {
+				int start = i * outputLenght;
+				int offset = i * outputLenght + outputLenght;
+				byte[] subByte = Arrays.copyOfRange(plainTextByte, start, offset);
+				byte[] encrypt = cipher.doFinal(subByte);
+				if (result == null) {
+					result = encrypt;
 				} else {
-					result = mergeByteArr(result, cipherByte);
+					result = mergeByteArr(result, encrypt);
 				}
 			}
-			if (byteRest != 0) {
-				byte[] subByteArr = subByteArr(cipherTextByte, cipherTextByte.length - byteRest, cipherTextByte.length);
-				byte[] cipherByte = cipher.doFinal(subByteArr);
+			if (restBlock != 0) {
+				byte[] subByte = Arrays.copyOfRange(plainTextByte, plainTextByte.length - restBlock,
+						plainTextByte.length);
+				byte[] encrypt = cipher.doFinal(subByte);
 				if (result == null) {
-					result = cipherByte;
-				} else
-					result = mergeByteArr(result, cipherByte);
+					result = encrypt;
+				} else {
+					result = mergeByteArr(result, encrypt);
+				}
 			}
-			return result;
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
@@ -228,9 +113,43 @@ public class RSA {
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return result;
 	}
-	public static void main(String[] args) {
-		
+
+	public byte[] decrypt(byte[] cipherTextByte, RSA_KEY keyType) {
+		// 128 256 512
+		byte[] result = null;
+		try {
+			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			if (keyType == RSA_KEY.PRIVATE_KEY) {
+				cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
+			} else {
+				cipher.init(Cipher.DECRYPT_MODE, this.publicKey);
+			}
+			int outputLenght = cipher.getOutputSize(cipherTextByte.length);
+			int countBlock = cipherTextByte.length / outputLenght;
+			for (int i = 0; i < countBlock; i++) {
+				int start = i * outputLenght;
+				int offset = i * outputLenght + outputLenght;
+				byte[] subByte = Arrays.copyOfRange(cipherTextByte, start, offset);
+				byte[] encrypt = cipher.doFinal(subByte);
+				if (result == null) {
+					result = encrypt;
+				} else {
+					result = mergeByteArr(result, encrypt);
+				}
+			}
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }
