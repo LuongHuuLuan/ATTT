@@ -64,13 +64,17 @@ public class mainGUI extends JFrame {
 
 							}
 							FileUtils.saveText(new File("workspace_path.txt"), result.getAbsolutePath());
+							WORKSPACE_PATH = result.getAbsolutePath();
+							mainGUI frame = new mainGUI();
+							frame.setVisible(true);
+							frame.setLocationRelativeTo(null);
 						}
 					} else {
 						WORKSPACE_PATH = workspacePath;
+						mainGUI frame = new mainGUI();
+						frame.setVisible(true);
+						frame.setLocationRelativeTo(null);
 					}
-					mainGUI frame = new mainGUI();
-					frame.setVisible(true);
-					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
