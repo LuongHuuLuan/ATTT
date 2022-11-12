@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.AES;
 
 public class AesEncryptGUI extends JPanel {
@@ -44,7 +45,6 @@ public class AesEncryptGUI extends JPanel {
 	public AesEncryptGUI() {
 		aes = new AES();
 		setLayout(null);
-
 		JLabel lblTool = new JLabel("@LHL Encrypt Tool");
 		lblTool.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTool.setForeground(Color.LIGHT_GRAY);
@@ -264,7 +264,7 @@ public class AesEncryptGUI extends JPanel {
 			} else {
 				saveContent = cipherText;
 			}
-			FileUtils.onSave(saveContent);
+			FileUtils.onSaveText(saveContent);
 		}
 	}
 

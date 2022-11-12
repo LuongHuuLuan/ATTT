@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.DES;
 
 public class DesEncryptGUI extends JPanel {
@@ -83,7 +84,6 @@ public class DesEncryptGUI extends JPanel {
 		panelCipherText.add(scrollPaneCipherText);
 
 		textAreaCipherText = new JTextArea();
-		textAreaCipherText.setEditable(false);
 		scrollPaneCipherText.setViewportView(textAreaCipherText);
 
 		JLabel lblCipherText = new JLabel("Cipher text");
@@ -242,7 +242,7 @@ public class DesEncryptGUI extends JPanel {
 			} else {
 				saveContent = cipherText;
 			}
-			FileUtils.onSave(saveContent);
+			FileUtils.onSaveText(saveContent);
 		}
 	}
 

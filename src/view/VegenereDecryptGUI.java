@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.Alphabet.ALPHABET;
 import symmetric.Vegenere;
 
@@ -96,7 +97,6 @@ public class VegenereDecryptGUI extends JPanel {
 		panelPlainText.add(scrollPanePlainText);
 
 		textAreaPlainText = new JTextArea();
-		textAreaPlainText.setEditable(false);
 		scrollPanePlainText.setViewportView(textAreaPlainText);
 
 		JLabel lblPlainText = new JLabel("Plain text");
@@ -240,7 +240,7 @@ public class VegenereDecryptGUI extends JPanel {
 		if (textAreaCipherText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSave(textAreaCipherText.getText());
+			FileUtils.onSaveText(textAreaCipherText.getText());
 		}
 	}
 

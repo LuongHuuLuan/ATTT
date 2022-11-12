@@ -8,8 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -21,6 +23,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import file_utils.FileUtils;
+
 public class mainGUI extends JFrame {
 	/**
 	 * 
@@ -31,6 +35,7 @@ public class mainGUI extends JFrame {
 	private JTabbedPane tabbedPane;
 	private JLabel lblTitle;
 	private JPanel panelTitle;
+	public static String WORKSPACE_PATH = "";
 
 	/**
 	 * Launch the application.
@@ -39,6 +44,30 @@ public class mainGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					String workspacePath = FileUtils.readFile("workspace_path.txt").trim();
+					if (workspacePath.length() == 0) {
+						File result = new File("D:\\EcrTool");
+						if (!result.exists()) {
+							result.mkdir();
+						}
+						JFileChooser fileChooser = new JFileChooser(result);
+						fileChooser.setMultiSelectionEnabled(false);
+						fileChooser.setDialogTitle("Choose Workspace");
+						fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+						int x = fileChooser.showDialog(null, "Select");
+						if (x == JFileChooser.APPROVE_OPTION) {
+							String defaultDir = result.getAbsolutePath();
+							result = fileChooser.getSelectedFile();
+							String chooseDir = result.getAbsolutePath();
+							if (!defaultDir.equals(chooseDir)) {
+								new File("D:\\EcrTool").delete();
+
+							}
+							FileUtils.saveText(new File("workspace_path.txt"), result.getAbsolutePath());
+						}
+					} else {
+						WORKSPACE_PATH = workspacePath;
+					}
 					mainGUI frame = new mainGUI();
 					frame.setVisible(true);
 					frame.setLocationRelativeTo(null);
@@ -52,7 +81,7 @@ public class mainGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	
+
 	public mainGUI() {
 		setTitle("LHL Encrypt Tool");
 		setResizable(false);
@@ -82,34 +111,40 @@ public class mainGUI extends JFrame {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 
-		JMenuItem mnItImportText = new JMenuItem("Import text");
-		mnFile.add(mnItImportText);
+		JMenuItem mnItSwitchWorkspace = new JMenuItem("Switch Workspace");
+		mnFile.add(mnItSwitchWorkspace);
+		mnItSwitchWorkspace.addActionListener(new ActionListener() {
 
-		JMenuItem mnItSave = new JMenuItem("save text");
-		mnFile.add(mnItSave);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				File result = null;
+				JFileChooser fileChooser = new JFileChooser(WORKSPACE_PATH);
+				fileChooser.setMultiSelectionEnabled(false);
+				fileChooser.setDialogTitle("Choose Workspace");
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int x = fileChooser.showDialog(null, "Select");
+				if (x == JFileChooser.APPROVE_OPTION) {
+					result = fileChooser.getSelectedFile();
+					FileUtils.saveText(new File("workspace_path.txt"), result.getAbsolutePath());
+					WORKSPACE_PATH = result.getAbsolutePath();
+				}
+			}
+		});
 
 		JMenuItem mnImExit = new JMenuItem("Exit");
 		mnImExit.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String[] options = {"Yes", "No"};
-				int x = JOptionPane.showOptionDialog(null, "Do you want exit?", "Exit", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if(x == 0) {
+				String[] options = { "Yes", "No" };
+				int x = JOptionPane.showOptionDialog(null, "Do you want exit?", "Exit", JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+				if (x == 0) {
 					System.exit(0);
 				}
 			}
 		});
 		mnFile.add(mnImExit);
-
-		JMenu mnMode = new JMenu("Mode");
-		menuBar.add(mnMode);
-
-		JMenuItem mnImEncrypt = new JMenuItem("Encrypt");
-		mnMode.add(mnImEncrypt);
-
-		JMenuItem mnImDecrypt = new JMenuItem("Decrypt");
-		mnMode.add(mnImDecrypt);
 		// end menubar
 
 		// Side bar

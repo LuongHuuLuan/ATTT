@@ -1,11 +1,15 @@
 package public_key;
 
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
@@ -23,11 +27,18 @@ public class RSA {
 	}
 
 	public RSA() {
-
+		
 	}
 
 	public PublicKey getPublicKey() {
 		return publicKey;
+	}
+
+	public void setPublicKey(byte[] keyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		X509EncodedKeySpec ks = new X509EncodedKeySpec(keyBytes);
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		PublicKey pk = kf.generatePublic(ks);
+		this.publicKey = pk;
 	}
 
 	public void setPublicKey(PublicKey publicKey) {
@@ -36,6 +47,13 @@ public class RSA {
 
 	public PrivateKey getPrivateKey() {
 		return privateKey;
+	}
+
+	public void setPrivateKey(byte[] keyBytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(keyBytes);
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		PrivateKey pk = kf.generatePrivate(ks);
+		this.privateKey = pk;
 	}
 
 	public void setPrivateKey(PrivateKey privateKey) {

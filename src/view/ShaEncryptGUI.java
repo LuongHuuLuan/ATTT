@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import hasing.Hasing;
 
 public class ShaEncryptGUI extends JPanel {
@@ -158,7 +159,7 @@ public class ShaEncryptGUI extends JPanel {
 		if (textAreaCipherText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSave(textAreaCipherText.getText());
+			FileUtils.onSaveText(textAreaCipherText.getText());
 		}
 	}
 

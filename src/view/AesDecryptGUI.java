@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.AES;
 
 public class AesDecryptGUI extends JPanel {

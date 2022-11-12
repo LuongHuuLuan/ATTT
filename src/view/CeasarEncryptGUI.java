@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.Alphabet.ALPHABET;
 import symmetric.Caesar;
 
@@ -81,7 +82,6 @@ public class CeasarEncryptGUI extends JPanel {
 		panelCipherText.add(scrollPaneCipherText);
 
 		textAreaCipherText = new JTextArea();
-		textAreaCipherText.setEditable(false);
 		scrollPaneCipherText.setViewportView(textAreaCipherText);
 
 		JLabel lblCipherText = new JLabel("Cipher text");
@@ -184,7 +184,7 @@ public class CeasarEncryptGUI extends JPanel {
 		if (textAreaCipherText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSave(textAreaCipherText.getText());
+			FileUtils.onSaveText(textAreaCipherText.getText());
 		}
 	}
 

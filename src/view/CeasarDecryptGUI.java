@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.Alphabet.ALPHABET;
 import symmetric.Caesar;
 
@@ -81,7 +82,6 @@ public class CeasarDecryptGUI extends JPanel {
 		panelPlainText.add(scrollPanePlainText);
 
 		textAreaPlainText = new JTextArea();
-		textAreaPlainText.setEditable(false);
 		scrollPanePlainText.setViewportView(textAreaPlainText);
 
 		JLabel lblPlainText = new JLabel("Plain text");
@@ -118,7 +118,7 @@ public class CeasarDecryptGUI extends JPanel {
 				if (textAreaPlainText.getText().length() == 0) {
 					JOptionPane.showMessageDialog(null, "Nothing to save");
 				} else {
-					FileUtils.onSave(textAreaPlainText.getText());
+					FileUtils.onSaveText(textAreaPlainText.getText());
 				}
 			}
 		});

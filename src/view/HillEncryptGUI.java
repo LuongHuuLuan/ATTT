@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.Alphabet.ALPHABET;
 import symmetric.Hill;
 
@@ -85,7 +86,6 @@ public class HillEncryptGUI extends JPanel {
 		panelCipherText.add(scrollPaneCipherText);
 
 		textAreaCipherText = new JTextArea();
-		textAreaCipherText.setEditable(false);
 		scrollPaneCipherText.setViewportView(textAreaCipherText);
 
 		JLabel lblCipherText = new JLabel("Cipher text");
@@ -265,7 +265,7 @@ public class HillEncryptGUI extends JPanel {
 		String key = textFieldKey.getText().trim();
 		if (hill.checkKey(key)) {
 			saveContent += key;
-			FileUtils.onSave(saveContent);
+			FileUtils.onSaveText(saveContent);
 		} else {
 			JOptionPane.showMessageDialog(null, "Invalid key");
 		}
@@ -275,7 +275,7 @@ public class HillEncryptGUI extends JPanel {
 		if (textAreaCipherText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSave(textAreaCipherText.getText());
+			FileUtils.onSaveText(textAreaCipherText.getText());
 		}
 	}
 

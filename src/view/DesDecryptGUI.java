@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.DES;
 
 public class DesDecryptGUI extends JPanel {
@@ -83,7 +84,6 @@ public class DesDecryptGUI extends JPanel {
 		panelPlainText.add(scrollPanePlainText);
 
 		textAreaPlainText = new JTextArea();
-		textAreaPlainText.setEditable(false);
 		scrollPanePlainText.setViewportView(textAreaPlainText);
 
 		JLabel lblPlainText = new JLabel("Plain text");

@@ -1,4 +1,4 @@
-package view;
+package file_utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -19,15 +19,18 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import view.mainGUI;
+
 public class FileUtils {
+
 	public static File chooseFile() {
 		File result = null;
-		JFileChooser fileChooser = new JFileChooser();
-		FileNameExtensionFilter txtExt = new FileNameExtensionFilter("text file", "txt");
-		fileChooser.setFileFilter(txtExt);
+		File curDir = new File(mainGUI.WORKSPACE_PATH);
+		JFileChooser fileChooser = new JFileChooser(curDir);
+		FileNameExtensionFilter filterExt = new FileNameExtensionFilter("Ecr, Txt Files", "ecr", "txt");
+		fileChooser.setFileFilter(filterExt);
 		fileChooser.setMultiSelectionEnabled(false);
 		fileChooser.setDialogTitle("Select text file");
-
 		int x = fileChooser.showDialog(null, "Select");
 		if (x == JFileChooser.APPROVE_OPTION) {
 			result = fileChooser.getSelectedFile();
@@ -54,6 +57,7 @@ public class FileUtils {
 			buffReader.close();
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Can not read this file");
+			e.printStackTrace();
 		}
 		return result;
 	}
@@ -77,78 +81,116 @@ public class FileUtils {
 		return byteFile;
 	}
 
-	public static void onByteSave(byte[] input) {
-		JFileChooser fileChooser = new JFileChooser();
+	private static void saveByte(File file, byte[] bytes) {
+		try {
+			ByteArrayInputStream BAIS = new ByteArrayInputStream(bytes);
+			byte[] buff = new byte[1024];
+			int byteRead = 0;
+			BufferedOutputStream BOS = new BufferedOutputStream(new FileOutputStream(file));
+			while ((byteRead = BAIS.read(buff)) != -1) {
+				BOS.write(buff, 0, byteRead);
+			}
+			BOS.flush();
+			BAIS.close();
+			BOS.close();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Can not save file, try again");
+		}
+	}
+
+	public static void onByteSave(byte[] bytes) {
+		JFileChooser fileChooser = new JFileChooser(mainGUI.WORKSPACE_PATH);
+		FileNameExtensionFilter filterExt = new FileNameExtensionFilter("Ecr, Txt Files", "ecr", "txt");
+		fileChooser.setFileFilter(filterExt);
+		File file = new File("fileName.ecr");
+		fileChooser.setSelectedFile(file);
 		fileChooser.setDialogTitle("Choose location to save");
 		int x = fileChooser.showSaveDialog(null);
 		if (x == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			try {
-				String[] options = { "Yes", "No" };
-				int y = JOptionPane.showOptionDialog(null, "File is exist do you want replace it?", "Replace",
-						JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (y == 0) {
-					ByteArrayInputStream BAIS = new ByteArrayInputStream(input);
-					byte[] buff = new byte[1024];
-					int byteRead = 0;
-					BufferedOutputStream BOS = new BufferedOutputStream(new FileOutputStream(file));
-					while ((byteRead = BAIS.read(buff)) != -1) {
-						BOS.write(buff, 0, byteRead);
+			file = fileChooser.getSelectedFile();
+			if (file.exists()) {
+				if (file.exists()) {
+					String[] options = { "Yes", "No" };
+					int y = JOptionPane.showOptionDialog(null, "File is exist do you want replace it?", "Replace",
+							JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+					if (y == 0) {
+						saveByte(file, bytes);
 					}
-					BOS.flush();
-					BAIS.close();
-					BOS.close();
+
+				} else {
+					saveByte(file, bytes);
 				}
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Can not save file, try again");
 			}
 		}
 	}
 
-	public static void onSave(String input) {
-		JFileChooser fileChooser = new JFileChooser();
-		FileNameExtensionFilter txtExt = new FileNameExtensionFilter("text file", "txt");
-		fileChooser.setFileFilter(txtExt);
+	public static void saveText(File file, String input) {
+		try {
+			FileWriter fw = new FileWriter(file);
+			fw.write(input);
+			fw.flush();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Can not save file, try again");
+		}
+	}
+
+	public static void onSaveText(String input) {
+		JFileChooser fileChooser = new JFileChooser(mainGUI.WORKSPACE_PATH);
+		FileNameExtensionFilter filterExt = new FileNameExtensionFilter("Ecr, Txt Files", "ecr", "txt");
+		fileChooser.setFileFilter(filterExt);
+		File file = new File("fileName.ecr");
+		fileChooser.setSelectedFile(file);
 		fileChooser.setDialogTitle("Choose location to save");
 		int x = fileChooser.showSaveDialog(null);
 		if (x == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			try {
+			file = fileChooser.getSelectedFile();
+			if (file.exists()) {
 				String[] options = { "Yes", "No" };
 				int y = JOptionPane.showOptionDialog(null, "File is exist do you want replace it?", "Replace",
 						JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				if (y == 0) {
-					FileWriter fw = new FileWriter(file);
-					fw.write(input);
-					fw.flush();
-					fw.close();
+					saveText(file, input);
 				}
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Can not save file, try again");
+
+			} else {
+				saveText(file, input);
 			}
+		}
+	}
+
+	private static void saveObj(File file, Object obj) {
+		try {
+			ObjectOutputStream OOS = new ObjectOutputStream(new FileOutputStream(file));
+			OOS.writeObject(obj);
+			OOS.flush();
+			OOS.close();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Can not save file, try again");
 		}
 	}
 
 	public static void onSaveObj(Object obj) {
-		JFileChooser fileChooser = new JFileChooser();
-		FileNameExtensionFilter txtExt = new FileNameExtensionFilter("text file", "txt");
-		fileChooser.setFileFilter(txtExt);
+		JFileChooser fileChooser = new JFileChooser(mainGUI.WORKSPACE_PATH);
+		FileNameExtensionFilter filterExt = new FileNameExtensionFilter("Ecr, Txt Files", "ecr", "txt");
+		fileChooser.setFileFilter(filterExt);
+		File file = new File("fileName.ecr");
+		fileChooser.setSelectedFile(file);
 		fileChooser.setDialogTitle("Choose location to save");
 		int x = fileChooser.showSaveDialog(null);
 		if (x == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			try {
+			file = fileChooser.getSelectedFile();
+			if (file.exists()) {
 				String[] options = { "Yes", "No" };
 				int y = JOptionPane.showOptionDialog(null, "File is exist do you want replace it?", "Replace",
 						JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 				if (y == 0) {
-					ObjectOutputStream OOS = new ObjectOutputStream(new FileOutputStream(file));
-					OOS.writeObject(obj);
-					OOS.flush();
-					OOS.close();
+					saveObj(file, obj);
 				}
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Can not save file, try again");
+
+			} else {
+				saveObj(file, obj);
 			}
 		}
 	}

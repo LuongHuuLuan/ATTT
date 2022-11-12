@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.Alphabet.ALPHABET;
 import symmetric.Substitution;
 
@@ -85,7 +86,6 @@ public class SubstitutionEncryptGUI extends JPanel {
 		panelCipherText.add(scrollPaneCipherText);
 
 		textAreaCipherText = new JTextArea();
-		textAreaCipherText.setEditable(false);
 		scrollPaneCipherText.setViewportView(textAreaCipherText);
 
 		JLabel lblCipherText = new JLabel("Cipher text");
@@ -269,7 +269,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 		String key = textFieldKey.getText().trim();
 		if (key.length() == substitution.getAlphabetLength()) {
 			saveContent += key;
-			FileUtils.onSave(saveContent);
+			FileUtils.onSaveText(saveContent);
 		} else {
 			JOptionPane.showMessageDialog(null,
 					"Key is a string have lenght is " + substitution.getAlphabetLength() + ", try again");
@@ -280,7 +280,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 		if (textAreaCipherText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSave(textAreaCipherText.getText());
+			FileUtils.onSaveText(textAreaCipherText.getText());
 		}
 	}
 

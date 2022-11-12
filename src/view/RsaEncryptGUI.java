@@ -9,11 +9,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.swing.ButtonGroup;
@@ -30,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import public_key.RSA;
 import public_key.RSA.RSA_KEY;
 
@@ -171,7 +167,7 @@ public class RsaEncryptGUI extends JPanel {
 			}
 		});
 
-		JButton btnImportText = new JButton("Import text");
+		JButton btnImportText = new JButton("Import Text");
 		btnImportText.setForeground(Color.WHITE);
 		btnImportText.setFont(btnFont);
 		btnImportText.setBackground(Color.BLUE);
@@ -213,7 +209,7 @@ public class RsaEncryptGUI extends JPanel {
 			}
 		});
 
-		JButton btnSaveText = new JButton("Save text");
+		JButton btnSaveText = new JButton("Save Text");
 		btnSaveText.setForeground(Color.WHITE);
 		btnSaveText.setFont(btnFont);
 		btnSaveText.setBackground(Color.BLUE);
@@ -302,30 +298,22 @@ public class RsaEncryptGUI extends JPanel {
 		return "public key";
 	}
 
-	public PublicKey getPublicKey() {
+	public void getPublicKey() {
 		try {
-			X509EncodedKeySpec ks = new X509EncodedKeySpec(Base64.getDecoder().decode(textFieldPLKey.getText().trim()));
-			KeyFactory kf = KeyFactory.getInstance("RSA");
-			PublicKey pk = kf.generatePublic(ks);
-
-			return pk;
+			byte[] keyBytes = Base64.getDecoder().decode(textFieldPLKey.getText().trim());
+			this.rsa.setPublicKey(keyBytes);
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Invalid key");
 		}
-		return null;
 	}
 
-	public PrivateKey getPrivateKey() {
+	public void getPrivateKey() {
 		try {
-			byte[] decodeByte = Base64.getDecoder().decode(textFieldPVKey.getText().trim());
-			PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(decodeByte);
-			KeyFactory kf = KeyFactory.getInstance("RSA");
-			PrivateKey pk = kf.generatePrivate(ks);
-			return pk;
+			byte[] keyBytes = Base64.getDecoder().decode(textFieldPVKey.getText().trim());
+			this.rsa.setPrivateKey(keyBytes);
 		} catch (Exception e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Invalid key");
 		}
-		return null;
 	}
 
 	public void onImportKey() {
@@ -335,7 +323,9 @@ public class RsaEncryptGUI extends JPanel {
 				Key key = (Key) FileUtils.readObjectFile(choose.getAbsolutePath());
 				if (key.getAlgorithm().equalsIgnoreCase("RSA")) {
 					String baseKey = Base64.getEncoder().encodeToString(key.getEncoded());
-					if (getUseKey().equals("public key")) {
+					String classKey = key.getClass().getName();
+					String keyType = classKey.substring(classKey.lastIndexOf(".") + 1);
+					if(keyType.equals("RSAPublicKeyImpl")) {
 						textFieldPLKey.setText(baseKey);
 					} else {
 						textFieldPVKey.setText(baseKey);
@@ -413,7 +403,7 @@ public class RsaEncryptGUI extends JPanel {
 			} else {
 				saveContent = cipherText;
 			}
-			FileUtils.onSave(saveContent);
+			FileUtils.onSaveText(saveContent);
 		}
 	}
 
@@ -423,8 +413,7 @@ public class RsaEncryptGUI extends JPanel {
 				JOptionPane.showMessageDialog(null, "Nothing to encrypt");
 			} else {
 				if (getUseKey().equals("public key")) {
-					PublicKey publicKey = getPublicKey();
-					rsa.setPublicKey(publicKey);
+					getPublicKey();
 					if (rsa.getPublicKey() == null) {
 						JOptionPane.showMessageDialog(null, "Import or create new public key before encrypt");
 					} else {
@@ -440,8 +429,7 @@ public class RsaEncryptGUI extends JPanel {
 						}
 					}
 				} else {
-					PrivateKey privateKey = getPrivateKey();
-					rsa.setPrivateKey(privateKey);
+					getPrivateKey();
 					if (rsa.getPrivateKey() == null) {
 						JOptionPane.showMessageDialog(null, "Import or create new private key before encrypt");
 					} else {

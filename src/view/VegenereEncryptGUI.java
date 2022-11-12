@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import file_utils.FileUtils;
 import symmetric.Alphabet.ALPHABET;
 import symmetric.Vegenere;
 
@@ -284,7 +285,7 @@ public class VegenereEncryptGUI extends JPanel {
 		if (key.length() != 0) {
 			if (vegenere.checkKey(key)) {
 				saveContent += key;
-				FileUtils.onSave(saveContent);
+				FileUtils.onSaveText(saveContent);
 			} else {
 				JOptionPane.showMessageDialog(null, "Key is wrong format, try again vd: 'a c v' is key");
 			}
@@ -298,7 +299,7 @@ public class VegenereEncryptGUI extends JPanel {
 		if (textAreaCipherText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSave(textAreaCipherText.getText());
+			FileUtils.onSaveText(textAreaCipherText.getText());
 		}
 	}
 
