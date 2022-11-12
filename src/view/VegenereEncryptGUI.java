@@ -228,25 +228,20 @@ public class VegenereEncryptGUI extends JPanel {
 	public void onImportKey() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
-				if (keyType.trim().toLowerCase().equals("vegenere")) {
-					String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
-					if (alphabetType.equalsIgnoreCase("ENGLISH")) {
-						rdoUseEnglish.setSelected(true);
-						vegenere.setAlphabet(ALPHABET.ENGLISH);
-					} else {
-						rdoUseVietNamese.setSelected(true);
-						vegenere.setAlphabet(ALPHABET.VIETNAMESE);
-					}
-					String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
-					textFieldKey.setText(fileContent.trim());
+			String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
+			if (keyType.trim().toLowerCase().equals("vegenere")) {
+				String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
+				if (alphabetType.equalsIgnoreCase("ENGLISH")) {
+					rdoUseEnglish.setSelected(true);
+					vegenere.setAlphabet(ALPHABET.ENGLISH);
 				} else {
-					JOptionPane.showMessageDialog(null, "This is not vegenere key");
+					rdoUseVietNamese.setSelected(true);
+					vegenere.setAlphabet(ALPHABET.VIETNAMESE);
 				}
+				String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
+				textFieldKey.setText(fileContent.trim());
 			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+				JOptionPane.showMessageDialog(null, "This is not vegenere key");
 			}
 		}
 	}

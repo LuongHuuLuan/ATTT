@@ -190,25 +190,20 @@ public class HillDecryptGUI extends JPanel {
 	public void onImportKey() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
-				if (keyType.trim().toLowerCase().equals("hill")) {
-					String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
-					if (alphabetType.equalsIgnoreCase("ENGLISH")) {
-						rdoUseEnglish.setSelected(true);
-						hill.setAlphabet(ALPHABET.ENGLISH);
-					} else {
-						rdoUseVietNamese.setSelected(true);
-						hill.setAlphabet(ALPHABET.VIETNAMESE);
-					}
-					String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
-					textFieldKey.setText(fileContent.trim());
+			String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
+			if (keyType.trim().toLowerCase().equals("hill")) {
+				String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
+				if (alphabetType.equalsIgnoreCase("ENGLISH")) {
+					rdoUseEnglish.setSelected(true);
+					hill.setAlphabet(ALPHABET.ENGLISH);
 				} else {
-					JOptionPane.showMessageDialog(null, "This is not hill key");
+					rdoUseVietNamese.setSelected(true);
+					hill.setAlphabet(ALPHABET.VIETNAMESE);
 				}
+				String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
+				textFieldKey.setText(fileContent.trim());
 			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+				JOptionPane.showMessageDialog(null, "This is not hill key");
 			}
 		}
 	}
@@ -216,13 +211,8 @@ public class HillDecryptGUI extends JPanel {
 	public void onImportText() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-				textAreaCipherText.setText(fileContent);
-			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
-			}
+			String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+			textAreaCipherText.setText(fileContent);
 		}
 	}
 

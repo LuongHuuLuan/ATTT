@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -44,7 +45,12 @@ public class mainGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					String workspacePath = FileUtils.readFile("workspace_path.txt").trim();
+					String url = Paths.get("").toAbsolutePath().toString() + "\\settings.ecr";
+					File configFile = new File(url);
+					if (!configFile.exists()) {
+						configFile.createNewFile();
+					}
+					String workspacePath = FileUtils.readFile(url);
 					if (workspacePath.length() == 0) {
 						File result = new File("D:\\EcrTool");
 						if (!result.exists()) {
@@ -63,7 +69,7 @@ public class mainGUI extends JFrame {
 								new File("D:\\EcrTool").delete();
 
 							}
-							FileUtils.saveText(new File("workspace_path.txt"), result.getAbsolutePath());
+							FileUtils.saveText(new File(url), result.getAbsolutePath());
 							WORKSPACE_PATH = result.getAbsolutePath();
 							mainGUI frame = new mainGUI();
 							frame.setVisible(true);
@@ -129,8 +135,13 @@ public class mainGUI extends JFrame {
 				int x = fileChooser.showDialog(null, "Select");
 				if (x == JFileChooser.APPROVE_OPTION) {
 					result = fileChooser.getSelectedFile();
-					FileUtils.saveText(new File("workspace_path.txt"), result.getAbsolutePath());
+					if (!result.exists()) {
+						result.mkdir();
+					}
+					String url = Paths.get("").toAbsolutePath().toString() + "\\settings.ecr";
+					FileUtils.saveText(new File(url), result.getAbsolutePath());
 					WORKSPACE_PATH = result.getAbsolutePath();
+					JOptionPane.showMessageDialog(null, "Switch workspace: " + result.getAbsolutePath());
 				}
 			}
 		});

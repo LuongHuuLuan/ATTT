@@ -188,7 +188,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 
 		ButtonGroup btnGroups = new ButtonGroup();
 
-		 rdoUseEnglish = new JRadioButton("Use English alphabet");
+		rdoUseEnglish = new JRadioButton("Use English alphabet");
 		btnGroups.add(rdoUseEnglish);
 		rdoUseEnglish.setBounds(180, 0, 160, 20);
 		panelAlphabet.add(rdoUseEnglish);
@@ -201,7 +201,7 @@ public class SubstitutionEncryptGUI extends JPanel {
 			}
 		});
 
-		 rdoUseVietNamese = new JRadioButton("Use Vietnamese alphabet");
+		rdoUseVietNamese = new JRadioButton("Use Vietnamese alphabet");
 		btnGroups.add(rdoUseVietNamese);
 		rdoUseVietNamese.setBounds(340, 0, 200, 20);
 		panelAlphabet.add(rdoUseVietNamese);
@@ -218,25 +218,20 @@ public class SubstitutionEncryptGUI extends JPanel {
 	public void onImportKey() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
-				if (keyType.trim().toLowerCase().equals("substitution")) {
-					String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
-					if (alphabetType.equalsIgnoreCase("ENGLISH")) {
-						rdoUseEnglish.setSelected(true);
-						substitution.setAlphabet(ALPHABET.ENGLISH);
-					} else {
-						rdoUseVietNamese.setSelected(true);
-						substitution.setAlphabet(ALPHABET.VIETNAMESE);
-					}
-					String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
-					textFieldKey.setText(fileContent.trim());
+			String keyType = FileUtils.getKeyType(choose.getAbsolutePath());
+			if (keyType.trim().toLowerCase().equals("substitution")) {
+				String alphabetType = FileUtils.getKeyAlphabet(choose.getAbsolutePath());
+				if (alphabetType.equalsIgnoreCase("ENGLISH")) {
+					rdoUseEnglish.setSelected(true);
+					substitution.setAlphabet(ALPHABET.ENGLISH);
 				} else {
-					JOptionPane.showMessageDialog(null, "This is not substitution key");
+					rdoUseVietNamese.setSelected(true);
+					substitution.setAlphabet(ALPHABET.VIETNAMESE);
 				}
+				String fileContent = FileUtils.readContentFile(choose.getAbsolutePath());
+				textFieldKey.setText(fileContent.trim());
 			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
+				JOptionPane.showMessageDialog(null, "This is not substitution key");
 			}
 		}
 	}
@@ -244,13 +239,8 @@ public class SubstitutionEncryptGUI extends JPanel {
 	public void onImportText() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-				textAreaPlainText.setText(fileContent);
-			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
-			}
+			String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+			textAreaPlainText.setText(fileContent);
 		}
 	}
 

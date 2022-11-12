@@ -170,13 +170,8 @@ public class CeasarEncryptGUI extends JPanel {
 	public void onImportText() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-				textAreaPlainText.setText(fileContent);
-			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
-			}
+			String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+			textAreaPlainText.setText(fileContent);
 		}
 	}
 
@@ -202,7 +197,8 @@ public class CeasarEncryptGUI extends JPanel {
 					this.textAreaCipherText.setText(encryptText);
 				}
 			} catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(null, "Key is a number > -1 and <= " + ceasar.getAlphabetLength() + ", try again");
+				JOptionPane.showMessageDialog(null,
+						"Key is a number > -1 and <= " + ceasar.getAlphabetLength() + ", try again");
 			}
 		}
 	}
