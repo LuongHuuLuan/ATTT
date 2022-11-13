@@ -23,7 +23,7 @@ public class Hill {
 		result[0][1] = (int) Math.floor(Math.random() * alphabet.length);
 		result[1][0] = (int) Math.floor(Math.random() * alphabet.length);
 		result[1][1] = (int) Math.floor(Math.random() * alphabet.length);
-		if (detMatrix(result) == 0 || myMod(detMatrix(result), alphabet.length) == 0) {
+		if (!checkKey(convertKeyToString(result))) {
 			return createKey();
 		} else {
 			return result;
@@ -67,7 +67,7 @@ public class Hill {
 		if (input.length() % 2 != 0) {
 			input += "*";
 		}
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		char[] inputChars = fillerInput.toCharArray();
 		for (int i = 0; i < inputChars.length; i += 2) {
 			int x = -1;
@@ -87,7 +87,7 @@ public class Hill {
 	public String encryptWithSpecialChar(String input, String key) {
 		int[][] convertKey = convertKeyToInt(key);
 
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		char[] inputChars = fillerInput.toCharArray();
 
 		char[] simpleChar = new char[inputChars.length];
@@ -134,7 +134,7 @@ public class Hill {
 			alphabet = Alphabet.VIETNAMESE_ALPHABET;
 		}
 		int[][] inverseMatrix = inverseMatrix(key);
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		char[] inputChars = fillerInput.toCharArray();
 		for (int i = 0; i < inputChars.length; i += 2) {
 			int x = -1;
@@ -156,7 +156,7 @@ public class Hill {
 
 		int isOdd = Integer.parseInt(input.substring(input.length() - 1));
 		input = input.substring(0, input.length() - 1);
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		char[] inputChars = fillerInput.toCharArray();
 
 		char[] simpleChar = new char[inputChars.length];
@@ -268,7 +268,15 @@ public class Hill {
 		if (input.length() == 0)
 			return false;
 		try {
-			convertKeyToInt(input);
+			int[][] key = convertKeyToInt(input);
+			if (detMatrix(key) == 0 || myMod(detMatrix(key), alphabetLength) == 0) {
+				return false;
+			}
+			int det = detMatrix(key);
+			int inverseNum = inverseNum(det);
+			if (inverseNum == -1) {
+				return false;
+			}
 			return true;
 		} catch (Exception e) {
 			e.fillInStackTrace();
@@ -295,13 +303,23 @@ public class Hill {
 
 	public static void main(String[] args) {
 		Hill hill = new Hill();
-		int[][] key = hill.convertKeyToInt(Alphabet.ENGLISH_ALPHABET[11] + " " + Alphabet.ENGLISH_ALPHABET[8] + " "
-				+ Alphabet.ENGLISH_ALPHABET[3] + " " + Alphabet.ENGLISH_ALPHABET[7]);
-		hill.printKey(key);
-		String encrypt = hill.encryptWithSpecialChar("Lương Hữu Luânn", hill.convertKeyToString(key));
+		hill.setAlphabet(ALPHABET.ENGLISH);
+		String key = hill.convertKeyToString(hill.createKey());
+		System.out.println("key");
+		System.out.println(hill.checkKey(key));
+		hill.printKey(hill.convertKeyToInt(key));
+		System.out.println(key);
+		System.out.println("===========");
+		String s = "DHNONGLAM";
+		System.out.println(s);
+		String encrypt = hill.encryptWithSpecialChar(s, key);
 		System.out.println(encrypt);
-		String decrypt = hill.decryptWithSpecialChar(encrypt, hill.convertKeyToString(key));
+		String decrypt = hill.decryptWithSpecialChar(encrypt, key);
 		System.out.println(decrypt);
+
+		System.out.println(hill.myMod(28, 26));
+//		7 9 21     (9*7 + 21*19)%26  21 r
+//		19 10 12     (10*7 + 12*19)%26  9 g
 
 	}
 }

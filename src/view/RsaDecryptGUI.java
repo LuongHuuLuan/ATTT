@@ -265,10 +265,10 @@ public class RsaDecryptGUI extends JPanel {
 		if (choose != null) {
 			String[] fileNameSplit = choose.getName().split("\\.");
 			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+				String fileContent = FileUtils.readTextFile(choose.getAbsolutePath());
 				textAreaCipherText.setText(fileContent.trim());
 			} else {
-				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+				String fileContent = FileUtils.readTextFile(choose.getAbsolutePath());
 				byteData = Base64.getDecoder().decode(fileContent.trim());
 				textAreaCipherText.setText("Decrypt file: " + choose.getAbsolutePath());
 			}

@@ -211,29 +211,29 @@ public class HillDecryptGUI extends JPanel {
 	public void onImportText() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+			String fileContent = FileUtils.readTextFile(choose.getAbsolutePath());
 			textAreaCipherText.setText(fileContent);
 		}
 	}
 
 	public void onSaveText() {
-		if (textAreaCipherText.getText().trim().length() == 0) {
+		if (textAreaPlainText.getText().trim().length() == 0) {
 			JOptionPane.showMessageDialog(null, "Nothing to save");
 		} else {
-			FileUtils.onSaveText(textAreaCipherText.getText());
+			FileUtils.onSaveText(textAreaPlainText.getText());
 		}
 	}
 
 	public void onDecrypt() {
 		if (textAreaCipherText.getText().trim().length() == 0) {
-			JOptionPane.showMessageDialog(null, "Nothing to encrypt");
+			JOptionPane.showMessageDialog(null, "Nothing to decrypt");
 		} else {
 			String key = this.textFieldKey.getText().trim();
 			if (!hill.checkKey(key)) {
 				JOptionPane.showMessageDialog(null, "Invalid key");
 			} else {
-				String encryptText = hill.decryptWithSpecialChar(this.textAreaCipherText.getText().trim(), key);
-				this.textAreaPlainText.setText(encryptText);
+				String decryptText = hill.decryptWithSpecialChar(this.textAreaCipherText.getText().trim(), key);
+				this.textAreaPlainText.setText(decryptText);
 			}
 		}
 	}

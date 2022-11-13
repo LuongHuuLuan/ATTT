@@ -96,7 +96,7 @@ public class Vegenere {
 		} else {
 			alphabet = Alphabet.VIETNAMESE_ALPHABET;
 		}
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		String[] keysString = key.split(" ");
@@ -125,7 +125,7 @@ public class Vegenere {
 		} else {
 			alphabet = Alphabet.VIETNAMESE_ALPHABET;
 		}
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		String[] keysString = key.split(" ");

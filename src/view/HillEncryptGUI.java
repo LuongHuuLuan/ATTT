@@ -235,13 +235,8 @@ public class HillEncryptGUI extends JPanel {
 	public void onImportText() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String[] fileNameSplit = choose.getName().split("\\.");
-			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
-				textAreaPlainText.setText(fileContent);
-			} else {
-				JOptionPane.showMessageDialog(null, "Please choose file.txt");
-			}
+			String fileContent = FileUtils.readTextFile(choose.getAbsolutePath());
+			textAreaPlainText.setText(fileContent);
 		}
 	}
 
@@ -280,7 +275,7 @@ public class HillEncryptGUI extends JPanel {
 		} else {
 			String key = this.textFieldKey.getText().trim();
 			if (!hill.checkKey(key)) {
-				JOptionPane.showMessageDialog(null, "Invalid key");
+				JOptionPane.showMessageDialog(null, "Invalid key, try another key");
 			} else {
 				String encryptText = hill.encryptWithSpecialChar(this.textAreaPlainText.getText().trim(), key);
 				this.textAreaCipherText.setText(encryptText);

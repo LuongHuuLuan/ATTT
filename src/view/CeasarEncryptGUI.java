@@ -170,9 +170,10 @@ public class CeasarEncryptGUI extends JPanel {
 	public void onImportText() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+			String fileContent = FileUtils.readTextFile(choose.getAbsolutePath());
 			textAreaPlainText.setText(fileContent);
 		}
+
 	}
 
 	public void onSaveText() {

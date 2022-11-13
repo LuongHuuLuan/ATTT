@@ -229,7 +229,7 @@ public class AesEncryptGUI extends JPanel {
 		if (choose != null) {
 			String[] fileNameSplit = choose.getName().split("\\.");
 			if (fileNameSplit[fileNameSplit.length - 1].equals("txt")) {
-				String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+				String fileContent = FileUtils.readTextFile(choose.getAbsolutePath());
 				textAreaPlainText.setText(fileContent.trim());
 			} else {
 				byteData = FileUtils.readByteFile(choose.getAbsolutePath());

@@ -210,7 +210,7 @@ public class SubstitutionDecryptGUI extends JPanel {
 	public void onImportText() {
 		File choose = FileUtils.chooseFile();
 		if (choose != null) {
-			String fileContent = FileUtils.readFile(choose.getAbsolutePath());
+			String fileContent = FileUtils.readTextFile(choose.getAbsolutePath());
 			textAreaCipherText.setText(fileContent);
 		}
 	}

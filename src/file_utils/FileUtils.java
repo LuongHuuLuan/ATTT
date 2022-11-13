@@ -46,7 +46,7 @@ public class FileUtils {
 		return result;
 	}
 
-	public static String readFile(String path) {
+	public static String readTextFile(String path) {
 		String result = "";
 		try {
 			BufferedReader buffReader = new BufferedReader(new FileReader(path));

@@ -32,7 +32,7 @@ public class Substitution {
 	}
 
 	public String encrypt(String input, String key) {
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		char[] keyChars = key.toCharArray();
@@ -54,7 +54,7 @@ public class Substitution {
 		} else {
 			alphabet = Alphabet.VIETNAMESE_ALPHABET;
 		}
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		char[] keyChars = key.toCharArray();

@@ -50,7 +50,7 @@ public class mainGUI extends JFrame {
 					if (!configFile.exists()) {
 						configFile.createNewFile();
 					}
-					String workspacePath = FileUtils.readFile(url);
+					String workspacePath = FileUtils.readTextFile(url).trim();
 					if (workspacePath.length() == 0) {
 						File result = new File("D:\\EcrTool");
 						if (!result.exists()) {

@@ -21,47 +21,48 @@ public class Alphabet {
 		ENGLISH, VIETNAMESE
 	}
 
-	public static String filterInput(String input) {
+	public static String filterInput(String input, ALPHABET alphabetType) {
 		String result = input;
 		result = result.toLowerCase();
-		// a
-		for (int i = 0; i < UNIKEY_A1.length; i++) {
-			result = result.replaceAll(UNIKEY_A1[i] + "", "a");
-		}
-		for (int i = 0; i < UNIKEY_A2.length; i++) {
-			result = result.replaceAll(UNIKEY_A2[i] + "", "ă");
-		}
-		for (int i = 0; i < UNIKEY_A3.length; i++) {
-			result = result.replaceAll(UNIKEY_A3[i] + "", "â");
-		}
-		// e
-		for (int i = 0; i < UNIKEY_E1.length; i++) {
-			result = result.replaceAll(UNIKEY_E1[i] + "", "e");
-		}
-		for (int i = 0; i < UNIKEY_E2.length; i++) {
-			result = result.replaceAll(UNIKEY_E2[i] + "", "ê");
-		}
-		// i
-		for (int i = 0; i < UNIKEY_I.length; i++) {
-			result = result.replaceAll(UNIKEY_I[i] + "", "i");
-		}
-		// o
-		for (int i = 0; i < UNIKEY_O1.length; i++) {
-			result = result.replaceAll(UNIKEY_O1[i] + "", "o");
-		}
-		for (int i = 0; i < UNIKEY_O2.length; i++) {
-			result = result.replaceAll(UNIKEY_O2[i] + "", "ô");
-		}
-		for (int i = 0; i < UNIKEY_O3.length; i++) {
-			result = result.replaceAll(UNIKEY_O3[i] + "", "ơ");
-		}
-		// u
-		for (int i = 0; i < UNIKEY_U1.length; i++) {
-			result = result.replaceAll(UNIKEY_U1[i] + "", "u");
-		}
-		for (int i = 0; i < UNIKEY_U2.length; i++) {
-
-			result = result.replaceAll(UNIKEY_U2[i] + "", "ư");
+		if (alphabetType == ALPHABET.VIETNAMESE) {
+			// a
+			for (int i = 0; i < UNIKEY_A1.length; i++) {
+				result = result.replaceAll(UNIKEY_A1[i] + "", "a");
+			}
+			for (int i = 0; i < UNIKEY_A2.length; i++) {
+				result = result.replaceAll(UNIKEY_A2[i] + "", "ă");
+			}
+			for (int i = 0; i < UNIKEY_A3.length; i++) {
+				result = result.replaceAll(UNIKEY_A3[i] + "", "â");
+			}
+			// e
+			for (int i = 0; i < UNIKEY_E1.length; i++) {
+				result = result.replaceAll(UNIKEY_E1[i] + "", "e");
+			}
+			for (int i = 0; i < UNIKEY_E2.length; i++) {
+				result = result.replaceAll(UNIKEY_E2[i] + "", "ê");
+			}
+			// i
+			for (int i = 0; i < UNIKEY_I.length; i++) {
+				result = result.replaceAll(UNIKEY_I[i] + "", "i");
+			}
+			// o
+			for (int i = 0; i < UNIKEY_O1.length; i++) {
+				result = result.replaceAll(UNIKEY_O1[i] + "", "o");
+			}
+			for (int i = 0; i < UNIKEY_O2.length; i++) {
+				result = result.replaceAll(UNIKEY_O2[i] + "", "ô");
+			}
+			for (int i = 0; i < UNIKEY_O3.length; i++) {
+				result = result.replaceAll(UNIKEY_O3[i] + "", "ơ");
+			}
+			// u
+			for (int i = 0; i < UNIKEY_U1.length; i++) {
+				result = result.replaceAll(UNIKEY_U1[i] + "", "u");
+			}
+			for (int i = 0; i < UNIKEY_U2.length; i++) {
+				result = result.replaceAll(UNIKEY_U2[i] + "", "ư");
+			}
 		}
 		return result;
 	}

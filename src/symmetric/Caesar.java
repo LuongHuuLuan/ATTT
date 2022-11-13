@@ -13,7 +13,7 @@ public class Caesar {
 		} else {
 			alphabet = Alphabet.VIETNAMESE_ALPHABET;
 		}
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		for (int i = 0; i < inputChars.length; i++) {
@@ -35,7 +35,7 @@ public class Caesar {
 		} else {
 			alphabet = Alphabet.VIETNAMESE_ALPHABET;
 		}
-		String fillerInput = Alphabet.filterInput(input);
+		String fillerInput = Alphabet.filterInput(input, useAlphabet);
 		String result = "";
 		char[] inputChars = fillerInput.toCharArray();
 		for (int i = 0; i < inputChars.length; i++) {
